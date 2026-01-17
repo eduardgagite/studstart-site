@@ -100,7 +100,7 @@ export const registrationFields: RegistrationField[] = [
     label: "Как ты предпочитаешь получать инфу?",
     type: "radio",
     required: true,
-    options: ["Telegram", "Сайт"],
+    options: ["Телеграм", "Сайт"],
     step: 3,
   },
   {
@@ -112,7 +112,7 @@ export const registrationFields: RegistrationField[] = [
     step: 3,
   },
 
-  // Step 4: Глубокие вопросы (Q8-Q10)
+  // Step 4: Вопросы отбора (Q8-Q10)
   {
     id: "q8_why_you",
     label: "Почему нам стоит взять именно тебя, а не еще 10 человек с такими же ответами?",
@@ -138,41 +138,9 @@ export const registrationFields: RegistrationField[] = [
     step: 4,
   },
 
-  // Step 5: Личность (Q11-Q15)
+  // Step 5: Планы (Q11)
   {
-    id: "q11_freedom",
-    label: "Если тебе дают свободу делать “как хочешь”, это тебя скорее вдохновляет или напрягает? Почему?",
-    type: "textarea",
-    required: true,
-    placeholder: "Вдохновляет, потому что...",
-    step: 5,
-  },
-  {
-    id: "q12_leadership",
-    label: "Если бы тебя попросили вести команду, но без повышения статуса или бонусов, согласишься? Почему?",
-    type: "textarea",
-    required: true,
-    placeholder: "Да, ради опыта...",
-    step: 5,
-  },
-  {
-    id: "q13_feedback",
-    label: "Как ты предпочитаешь получать обратную связь?",
-    type: "radio",
-    required: true,
-    options: ["Сразу и прямо", "Чуть позже и мягче"],
-    step: 5,
-  },
-  {
-    id: "q14_disagreement",
-    label: "Если спикер говорит что-то, с чем ты категорически не согласен, ты...",
-    type: "radio",
-    required: true,
-    options: ["Промолчу", "Подниму руку и оспорю"],
-    step: 5,
-  },
-  {
-    id: "q15_future",
+    id: "q11_future",
     label: "Как ты планируешь использовать знания, полученные на школе актива, когда вернешься в вуз?",
     type: "textarea",
     required: true,
@@ -185,6 +153,6 @@ export const stepTitles: Record<number, string> = {
   1: "Контакты",
   2: "Мотивация",
   3: "Орг. моменты",
-  4: "Опыт",
-  5: "Личность",
+  4: "Отбор",
+  5: "Планы",
 };
