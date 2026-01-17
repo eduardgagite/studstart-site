@@ -1,12 +1,9 @@
 import { TrackedButton } from "@/components/tracked-button";
-import { TrackedLink } from "@/components/tracked-link";
 import { heroContent, photoGrid, vkAlbumUrl, organizers } from "@/data/home";
-import { contactItems } from "@/data/contacts";
 import { siteConfig } from "@/config/site";
 import { assetPath } from "@/lib/assets";
 import { HomeScrollTracker } from "@/components/home-scroll-tracker";
 import { cn } from "@/lib/cn";
-import { getContactIcon } from "@/components/ui/icons";
 
 const highlights = [
   {
@@ -48,14 +45,17 @@ export default function Home() {
     <div>
       <HomeScrollTracker />
 
-      <section className="section-panel panel-sky pt-12 pb-16 md:pt-16 md:pb-20">
+      <section 
+        className="section-panel panel-sky hero-mountains pt-12 pb-16 md:pt-16 md:pb-20"
+        style={{
+          '--hero-image': `url(${assetPath("/images/hero-mountains.png")})`,
+        } as React.CSSProperties}
+      >
         <div className="section-inner">
           <div
-            className="section-shell hero-mountains relative overflow-hidden"
+            className="section-shell relative overflow-hidden"
             style={{
-              backgroundImage: `linear-gradient(150deg, rgba(11,16,32,0.7), rgba(11,16,32,0.15)), url(${assetPath(
-                "/images/hero-mountains.png"
-              )})`,
+              backgroundImage: `linear-gradient(150deg, rgba(11,16,32,0.95), rgba(11,16,32,0.75))`,
             }}
           >
           <div className="absolute -right-10 top-10 hidden h-40 w-40 rounded-full bg-accent/30 blur-3xl md:block" />
@@ -140,24 +140,62 @@ export default function Home() {
       </section>
 
       <section id="howto" className="section-panel panel-route">
-        <div className="section-inner space-y-8">
-          <div className="space-y-3">
+        <div className="section-inner space-y-10">
+          <div className="max-w-2xl space-y-3">
             <p className="section-eyebrow">Путь к СтудСтарту</p>
-            <h2 className="text-3xl font-semibold md:text-4xl">Маршрут участника</h2>
-            <p className="max-w-2xl text-sm text-muted md:text-base">
+            <h2 className="text-4xl font-semibold md:text-5xl">Маршрут участника</h2>
+            <p className="route-subtitle text-sm md:text-base">
               Путь построен как маршрут: от заявки до старта в горах.
             </p>
           </div>
           <div className="route-grid">
-            {routeNotes.map((note, index) => (
-              <div key={routeTitles[index]} className="route-step">
-                <span className="route-dot">{index + 1}</span>
-                <div className="glass-card p-6">
-                  <h3 className="text-base font-semibold md:text-lg">{routeTitles[index]}</h3>
-                  <p className="mt-3 text-sm text-muted md:text-base">{note}</p>
-                </div>
-              </div>
-            ))}
+            <svg
+              className="route-path"
+              viewBox="0 0 100 20"
+              preserveAspectRatio="none"
+              aria-hidden="true"
+            >
+              <defs>
+                <linearGradient id="route-gradient" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stopColor="var(--route-accent)" />
+                  <stop offset="50%" stopColor="var(--route-primary)" />
+                  <stop offset="100%" stopColor="var(--route-accent)" />
+                </linearGradient>
+                <filter id="route-glow" x="-30%" y="-30%" width="160%" height="160%">
+                  <feGaussianBlur stdDeviation="6" result="blur" />
+                  <feMerge>
+                    <feMergeNode in="blur" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
+              </defs>
+              <path
+                className="route-path-glow"
+                d="M12.5 10 C 22.5 2, 30 18, 37.5 10 S 52.5 2, 62.5 10 S 77.5 18, 87.5 10"
+              />
+              <path
+                className="route-path-line"
+                d="M12.5 10 C 22.5 2, 30 18, 37.5 10 S 52.5 2, 62.5 10 S 77.5 18, 87.5 10"
+              />
+            </svg>
+            <ol className="route-steps" aria-label="Маршрут участника">
+              {routeNotes.map((note, index) => (
+                <li
+                  key={routeTitles[index]}
+                  className={cn("route-step", index === 0 && "route-step-active")}
+                >
+                  <div className="route-marker">
+                    <span className="route-dot">{index + 1}</span>
+                  </div>
+                  <div className="route-card glass-card p-6">
+                    <h3 className="text-base font-semibold md:text-lg">
+                      {routeTitles[index]}
+                    </h3>
+                    <p className="mt-3 text-sm text-muted md:text-base">{note}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
           </div>
         </div>
       </section>
@@ -201,74 +239,31 @@ export default function Home() {
 
       <section className="section-panel panel-glow">
         <div className="section-inner space-y-8">
-          <div className="flex flex-wrap items-end justify-between gap-6">
-            <div className="space-y-2">
-              <p className="section-eyebrow">Команда</p>
-              <h2 className="text-3xl font-semibold md:text-4xl">Кто делает СтудСтарт</h2>
-            </div>
-            <TrackedButton href="/contacts" variant="secondary">
-              Контакты
-            </TrackedButton>
+          <div className="space-y-2">
+            <p className="section-eyebrow">Команда</p>
+            <h2 className="text-3xl font-semibold md:text-4xl">Кто делает СтудСтарт</h2>
           </div>
-          <div className="grid gap-6 md:grid-cols-[1.1fr_0.9fr] lg:gap-8">
-            <div className="grid gap-5 md:grid-cols-2">
-              {organizers.map((item, index) => (
-                <div
-                  key={item.name}
-                  className="glass-card group relative overflow-hidden p-6 text-center transition-all duration-300 hover:scale-[1.02] md:p-8"
-                >
-                  <div className="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-primary/10 blur-2xl transition-all duration-500 group-hover:bg-primary/20" />
-                  <div className="relative mx-auto mb-5 h-24 w-24 overflow-hidden rounded-lg border-2 border-border/40 bg-white/95 p-3 shadow-soft transition-all duration-300 group-hover:border-primary/60 group-hover:shadow-lg md:h-28 md:w-28">
-                    <img
-                      src={assetPath(item.logo)}
-                      alt={item.name}
-                      className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105"
-                    />
-                  </div>
-                  <p className="text-lg font-semibold transition-colors duration-300 group-hover:text-primary md:text-xl">
-                    {item.name}
-                  </p>
-                  <p className="mt-2 text-sm text-muted md:text-base">{item.description}</p>
+          <div className="grid gap-6 md:grid-cols-2 lg:gap-8">
+            {organizers.map((item) => (
+              <div
+                key={item.name}
+                className="group relative flex h-full min-h-[320px] flex-col items-center justify-center overflow-hidden rounded-xl border border-border/40 bg-surface/60 p-8 text-center backdrop-blur-xl transition-all duration-500 hover:border-primary/50 hover:shadow-[0_0_0_1px_rgb(var(--primary)/0.3),0_0_40px_rgb(var(--primary)/0.15)] md:min-h-[380px] md:p-10"
+              >
+                <div className="relative mb-8 flex h-64 w-64 items-center justify-center overflow-hidden rounded-2xl border border-border/30 bg-white/90 p-8 shadow-sm transition-all duration-500 group-hover:border-primary/40 group-hover:shadow-md md:h-72 md:w-72 md:p-10">
+                  <img
+                    src={assetPath(item.logo)}
+                    alt={item.name}
+                    className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-105"
+                  />
                 </div>
-              ))}
-            </div>
-            <div className="flex flex-col gap-4">
-              {contactItems
-                .filter((item) => item.icon === "phone" || item.icon === "email")
-                .map((item) => (
-                  <TrackedLink
-                    key={item.label}
-                    href={item.href}
-                    goal={item.goal}
-                    className="glass-card flex items-start gap-4 p-5 text-sm transition-all duration-300 hover:-translate-y-0.5 hover:text-foreground md:p-6"
-                  >
-                    <span className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl border border-border/60 bg-background/70 text-primary transition-all duration-300 group-hover:border-primary/60 md:h-14 md:w-14">
-                      {getContactIcon(item.icon)}
-                    </span>
-                    <div className="min-w-0">
-                      <p className="text-xs uppercase tracking-[0.3em] text-muted">
-                        {item.label}
-                      </p>
-                      <p className="mt-2 text-base text-foreground md:text-lg">{item.value}</p>
-                    </div>
-                  </TrackedLink>
-                ))}
-              <div className="flex gap-4">
-                {contactItems
-                  .filter((item) => ["vk", "telegram", "instagram"].includes(item.icon))
-                  .map((item) => (
-                    <TrackedLink
-                      key={item.label}
-                      href={item.href}
-                      goal={item.goal}
-                      className="glass-card flex h-12 w-12 flex-1 items-center justify-center text-primary transition-all duration-300 hover:-translate-y-1 hover:border-primary/60 hover:bg-primary/10 hover:shadow-lg md:h-14 md:w-14"
-                      title={item.label}
-                    >
-                      {getContactIcon(item.icon)}
-                    </TrackedLink>
-                  ))}
+                <h3 className="mb-6 text-2xl font-semibold transition-colors duration-300 group-hover:text-primary md:text-3xl">
+                  {item.name}
+                </h3>
+                <p className="text-sm leading-relaxed text-muted md:text-base">
+                  {item.description}
+                </p>
               </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>

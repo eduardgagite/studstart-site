@@ -142,8 +142,11 @@
   }
 
   .panel-sky::before {
-    background: radial-gradient(circle at 10% 0%, rgb(var(--accent) / 0.22), transparent 55%),
-      linear-gradient(140deg, rgb(var(--surface-2)), rgb(var(--surface-1)));
+    background-image: var(--hero-image);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: 0;
   }
 
   .panel-route::before {
