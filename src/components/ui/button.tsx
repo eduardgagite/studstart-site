@@ -32,7 +32,7 @@ export function Button(props: ButtonProps | LinkProps) {
   const { className, variant = "primary", ...rest } = props;
   const classes = cn(baseStyles, variantStyles[variant], className);
 
-  if ("href" in rest) {
+  if (typeof rest.href === "string") {
     const { href, ...linkProps } = rest;
     return (
       <Link href={href} className={classes} {...linkProps} />
