@@ -11,6 +11,7 @@ type TrackedLinkProps = PropsWithChildren<
     className?: string;
     target?: string;
     rel?: string;
+    title?: string;
   }
 >;
 
