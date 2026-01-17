@@ -3,6 +3,28 @@ import { siteConfig } from "@/config/site";
 import { contactItems } from "@/data/contacts";
 import { navLinks } from "@/data/navigation";
 import { TrackedLink } from "@/components/tracked-link";
+import { VKIcon, TelegramIcon, InstagramIcon } from "@/components/ui/icons";
+
+const socialItems = [
+  {
+    key: "vk",
+    label: "ВКонтакте",
+    href: siteConfig.social.vk,
+    goal: "click_vk_footer" as const,
+  },
+  {
+    key: "telegram",
+    label: "Telegram",
+    href: siteConfig.social.telegram,
+    goal: "click_tg_footer" as const,
+  },
+  {
+    key: "instagram",
+    label: "Instagram",
+    href: siteConfig.social.instagram,
+    goal: "click_instagram_footer" as const,
+  },
+];
 
 export function SiteFooter() {
   const footerContacts = contactItems.filter(
@@ -27,7 +49,7 @@ export function SiteFooter() {
             ))}
           </div>
         </div>
-        <div className="space-y-3 text-sm">
+        <div className="space-y-4 text-sm">
           <p className="text-xs uppercase tracking-[0.3em] text-muted">Контакты</p>
           <div className="grid gap-2">
             {footerContacts.map((item) => (
@@ -38,6 +60,23 @@ export function SiteFooter() {
                 className="text-muted hover:text-foreground"
               >
                 {item.label}: {item.value}
+              </TrackedLink>
+            ))}
+          </div>
+          <div className="flex items-center gap-4 pt-2">
+            {socialItems.map((item) => (
+              <TrackedLink
+                key={item.key}
+                href={item.href}
+                goal={item.goal}
+                target="_blank"
+                rel="noreferrer"
+                className="group flex h-10 w-10 items-center justify-center rounded-xl border border-border/60 bg-background/70 text-muted transition-all duration-200 hover:border-primary/40 hover:bg-primary/10 hover:text-primary"
+                aria-label={item.label}
+              >
+                {item.key === "vk" && <VKIcon />}
+                {item.key === "telegram" && <TelegramIcon />}
+                {item.key === "instagram" && <InstagramIcon />}
               </TrackedLink>
             ))}
           </div>
