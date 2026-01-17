@@ -13,6 +13,7 @@ export type MetrikaGoal =
   | "click_email"
   | "download_program"
   | "open_vk_album"
+  | "open_vk_album_photo"
   | "subscribe_news"
   | "scroll_about"
   | "scroll_howto"

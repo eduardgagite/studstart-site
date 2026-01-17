@@ -1,33 +1,22 @@
 export type RegistrationField = {
   id: string;
   label: string;
-  type: "text" | "email" | "tel" | "select" | "textarea" | "date";
+  type: "text" | "email" | "tel" | "select" | "textarea" | "date" | "radio";
   required?: boolean;
   placeholder?: string;
   options?: string[];
+  step: number;
 };
 
 export const registrationFields: RegistrationField[] = [
+  // Step 1: Контакты
   {
     id: "fullName",
     label: "ФИО",
     type: "text",
     required: true,
     placeholder: "Иванова Алина Сергеевна",
-  },
-  {
-    id: "faculty",
-    label: "Факультет",
-    type: "text",
-    required: true,
-    placeholder: "Экономический",
-  },
-  {
-    id: "group",
-    label: "Группа",
-    type: "text",
-    required: true,
-    placeholder: "ЭК-101",
+    step: 1,
   },
   {
     id: "phone",
@@ -35,18 +24,167 @@ export const registrationFields: RegistrationField[] = [
     type: "tel",
     required: true,
     placeholder: "+7 999 000-00-00",
+    step: 1,
   },
   {
-    id: "email",
-    label: "Email",
-    type: "email",
+    id: "telegram",
+    label: "Telegram",
+    type: "text",
     required: true,
-    placeholder: "name@example.com",
+    placeholder: "@username",
+    step: 1,
   },
   {
-    id: "about",
-    label: "Коротко о себе",
+    id: "course",
+    label: "Курс",
+    type: "select",
+    required: true,
+    options: ["1 курс", "2 курс"],
+    placeholder: "Выберите курс",
+    step: 1,
+  },
+  {
+    id: "faculty",
+    label: "Факультет",
+    type: "text",
+    required: true,
+    placeholder: "Экономический",
+    step: 1,
+  },
+
+  // Step 2: Мотивация (Q1-Q4)
+  {
+    id: "q1_why",
+    label: "Почему ты хочешь поехать на форум? (1–2 предложения)",
     type: "textarea",
-    placeholder: "Чем увлекаешься? Что ждешь от форума?",
+    required: true,
+    placeholder: "Хочу найти новых друзей и...",
+    step: 2,
+  },
+  {
+    id: "q2_expectations",
+    label: "Что ты хочешь получить от поездки лично для себя?",
+    type: "textarea",
+    required: true,
+    placeholder: "Новые навыки, эмоции...",
+    step: 2,
+  },
+  {
+    id: "q3_social",
+    label: "Готов(а) ли ты знакомиться с новыми людьми и “включаться” в активности? (0–10)",
+    type: "select",
+    required: true,
+    options: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
+    step: 2,
+  },
+  {
+    id: "q4_difficulties",
+    label: "Что для тебя самое “трудное” в поездках? (1 короткий пункт)",
+    type: "text",
+    required: true,
+    placeholder: "Ранние подъемы / Отсутствие интернета...",
+    step: 2,
+  },
+
+  // Step 3: Орг моменты (Q5-Q7)
+  {
+    id: "q5_health",
+    label: "Есть ли ограничения по здоровью/питанию, которые важно учесть? (да/нет + что именно)",
+    type: "textarea",
+    required: true,
+    placeholder: "Нет / Да, аллергия на цитрусовые...",
+    step: 3,
+  },
+  {
+    id: "q6_source",
+    label: "Как ты предпочитаешь получать инфу?",
+    type: "radio",
+    required: true,
+    options: ["Telegram", "Сайт"],
+    step: 3,
+  },
+  {
+    id: "q7_organization",
+    label: "Состоишь ли ты в какой-либо организации или стажируешься?",
+    type: "textarea",
+    required: true,
+    placeholder: "Профком, Волонтеры Победы...",
+    step: 3,
+  },
+
+  // Step 4: Глубокие вопросы (Q8-Q10)
+  {
+    id: "q8_why_you",
+    label: "Почему нам стоит взять именно тебя, а не еще 10 человек с такими же ответами?",
+    type: "textarea",
+    required: true,
+    placeholder: "Потому что я...",
+    step: 4,
+  },
+  {
+    id: "q9_projects",
+    label: "Есть ли у тебя идеи или проекты, которые ты хотел(а) бы реализовать в университете?",
+    type: "textarea",
+    required: true,
+    placeholder: "Клуб любителей настолок...",
+    step: 4,
+  },
+  {
+    id: "q10_boring_work",
+    label: "Какую самую скучную или тяжелую работу тебе приходилось делать в составе команды? Что тебя мотивировало продолжать ее выполнять?",
+    type: "textarea",
+    required: true,
+    placeholder: "Перебирал архив...",
+    step: 4,
+  },
+
+  // Step 5: Личность (Q11-Q15)
+  {
+    id: "q11_freedom",
+    label: "Если тебе дают свободу делать “как хочешь”, это тебя скорее вдохновляет или напрягает? Почему?",
+    type: "textarea",
+    required: true,
+    placeholder: "Вдохновляет, потому что...",
+    step: 5,
+  },
+  {
+    id: "q12_leadership",
+    label: "Если бы тебя попросили вести команду, но без повышения статуса или бонусов, согласишься? Почему?",
+    type: "textarea",
+    required: true,
+    placeholder: "Да, ради опыта...",
+    step: 5,
+  },
+  {
+    id: "q13_feedback",
+    label: "Как ты предпочитаешь получать обратную связь?",
+    type: "radio",
+    required: true,
+    options: ["Сразу и прямо", "Чуть позже и мягче"],
+    step: 5,
+  },
+  {
+    id: "q14_disagreement",
+    label: "Если спикер говорит что-то, с чем ты категорически не согласен, ты...",
+    type: "radio",
+    required: true,
+    options: ["Промолчу", "Подниму руку и оспорю"],
+    step: 5,
+  },
+  {
+    id: "q15_future",
+    label: "Как ты планируешь использовать знания, полученные на школе актива, когда вернешься в вуз?",
+    type: "textarea",
+    required: true,
+    placeholder: "Буду применять в...",
+    step: 5,
   },
 ];
+
+export const stepTitles: Record<number, string> = {
+  1: "Контакты",
+  2: "Мотивация",
+  3: "Орг. моменты",
+  4: "Опыт",
+  5: "Личность",
+};

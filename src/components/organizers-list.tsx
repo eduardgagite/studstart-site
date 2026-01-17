@@ -1,70 +1,42 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { organizerRoles, organizers } from "@/data/organizers";
-import { cn } from "@/lib/cn";
+import { organizers } from "@/data/organizers";
 import { assetPath } from "@/lib/assets";
-
-const roles = ["Все", ...organizerRoles];
+import { cn } from "@/lib/cn";
 
 export function OrganizersList() {
-  const [query, setQuery] = useState("");
-  const [role, setRole] = useState(roles[0]);
-
-  const filtered = useMemo(() => {
-    return organizers.filter((item) => {
-      const matchesRole = role === "Все" || item.role === role;
-      const matchesQuery = item.name.toLowerCase().includes(query.toLowerCase());
-      return matchesRole && matchesQuery;
-    });
-  }, [query, role]);
-
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap gap-3">
-        <input
-          className="w-full rounded-md border border-border/70 bg-surface px-4 py-2 text-sm text-foreground md:w-64"
-          placeholder="Поиск по имени"
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
-        />
-        <div className="flex flex-wrap gap-2">
-          {roles.map((item) => (
-            <button
-              key={item}
-              type="button"
-              onClick={() => setRole(item)}
-              className={cn(
-                "rounded-md border border-border/60 px-3 py-2 text-xs font-semibold transition",
-                role === item
-                  ? "border-primary/70 bg-primary text-slate-900"
-                  : "bg-surface text-muted hover:text-foreground"
-              )}
-            >
-              {item}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="grid gap-4 md:grid-cols-2">
-        {filtered.map((organizer) => (
-          <div
-            key={organizer.id}
-            className="flex items-center gap-4 rounded-md border border-border/60 bg-surface p-4"
-          >
+    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+      {organizers.map((organizer) => (
+        <div
+          key={organizer.id}
+          className="group relative overflow-hidden rounded-2xl bg-surface-2 transition-all duration-300 hover:-translate-y-1 hover:shadow-card"
+        >
+          {/* Image Container */}
+          <div className="aspect-[3/4] h-full w-full overflow-hidden">
             <img
               src={assetPath(organizer.photo)}
               alt={organizer.name}
-              className="h-12 w-12 rounded-full object-cover"
+              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
-            <div>
-              <p className="text-sm font-semibold">{organizer.name}</p>
-              <p className="text-xs text-muted">{organizer.role}</p>
+          </div>
+
+          {/* Content Overlay */}
+          <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/90 via-black/40 to-transparent p-6">
+            <div className="transform transition-transform duration-300 group-hover:-translate-y-1">
+              <p className="text-lg font-bold text-white">
+                {organizer.name}
+              </p>
+              <p className="mt-1 text-sm font-medium text-white/80">
+                {organizer.role}
+              </p>
             </div>
           </div>
-        ))}
-      </div>
+          
+          {/* Decorative border */}
+          <div className="absolute inset-0 rounded-2xl border border-white/10 transition-colors group-hover:border-primary/50" />
+        </div>
+      ))}
     </div>
   );
 }

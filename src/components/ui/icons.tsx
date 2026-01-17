@@ -4,12 +4,22 @@ import {
   FaEnvelope,
   FaVk,
   FaTelegram,
-  FaInstagram
+  FaInstagram,
+  FaArrowUp,
+  FaMapMarkerAlt
 } from "react-icons/fa";
 
 type IconProps = {
   className?: string;
 };
+
+export function ArrowUpIcon({ className }: IconProps) {
+  return <FaArrowUp className={cn("h-4 w-4", className)} aria-hidden="true" />;
+}
+
+export function MapPinIcon({ className }: IconProps) {
+  return <FaMapMarkerAlt className={cn("h-5 w-5 flex-shrink-0", className)} aria-hidden="true" />;
+}
 
 export function PhoneIcon({ className }: IconProps) {
   return <FaPhone className={cn("h-5 w-5 flex-shrink-0", className)} aria-hidden="true" />;

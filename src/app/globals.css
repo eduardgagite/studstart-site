@@ -24,17 +24,17 @@
 }
 
 :root {
-  --background: 246 248 255;
+  --background: 255 255 255;
   --foreground: 11 16 32;
-  --muted: 76 90 122;
-  --surface-1: 238 242 255;
-  --surface-2: 224 230 255;
-  --border: 206 214 240;
-  --primary: 77 163 255;
-  --accent: 43 228 255;
-  --mint: 0 209 143;
-  --night: 12 20 40;
-  --ice: 210 226 255;
+  --muted: 100 116 139;
+  --surface-1: 248 250 252;
+  --surface-2: 241 245 249;
+  --border: 226 232 240;
+  --primary: 37 99 235; /* Stronger blue for light mode */
+  --accent: 14 165 233;
+  --mint: 16 185 129;
+  --night: 15 23 42;
+  --ice: 226 232 240;
 }
 
 .dark {
@@ -101,7 +101,7 @@
 
   .section-panel {
     position: relative;
-    padding: 3rem 0;
+    padding: 4rem 0;
   }
 
   .section-panel::before,
@@ -113,11 +113,12 @@
     right: 50%;
     margin-left: -50vw;
     margin-right: -50vw;
+    pointer-events: none;
   }
 
   .section-panel::after {
-    background: linear-gradient(180deg, transparent, rgb(var(--background)) 85%);
-    opacity: 0.25;
+    background: linear-gradient(180deg, transparent, rgb(var(--background)) 100%);
+    opacity: 0; /* Disabled by default, cleaned up transitions */
   }
 
   .panel-sky::after {
@@ -134,8 +135,8 @@
   }
 
   .section-sky {
-    background: radial-gradient(circle at 10% 0%, rgb(var(--accent) / 0.25), transparent 55%),
-      linear-gradient(140deg, rgb(var(--surface-2)), rgb(var(--surface-1)));
+    background: radial-gradient(circle at 10% 0%, rgb(var(--accent) / 0.1), transparent 55%),
+      linear-gradient(140deg, rgb(var(--surface-2) / 0.5), rgb(var(--background)));
   }
 
   .section-night {
@@ -144,13 +145,13 @@
   }
 
   .section-route {
-    background: radial-gradient(circle at 20% 0%, rgb(var(--mint) / 0.25), transparent 55%),
+    background: radial-gradient(circle at 20% 0%, rgb(var(--mint) / 0.15), transparent 55%),
       linear-gradient(160deg, rgb(var(--surface-1)), rgb(var(--surface-2)));
   }
 
   .section-glow {
-    background: radial-gradient(circle at 50% 10%, rgb(var(--accent) / 0.25), transparent 60%),
-      linear-gradient(120deg, rgb(var(--surface-2)), rgb(var(--surface-1)));
+    background: radial-gradient(circle at 50% 10%, rgb(var(--accent) / 0.15), transparent 60%),
+      linear-gradient(120deg, rgb(var(--surface-2) / 0.5), rgb(var(--surface-1) / 0.5));
   }
 
   .panel-sky::before {
@@ -159,11 +160,59 @@
     background-position: center;
     background-repeat: no-repeat;
     z-index: 0;
+    opacity: 0.15;
+  }
+  
+  .dark .panel-sky::before {
+    opacity: 0.4;
   }
 
   .panel-route::before {
-    background: radial-gradient(circle at 20% 0%, rgb(var(--mint) / 0.22), transparent 55%),
-      linear-gradient(160deg, rgb(var(--surface-1)), rgb(var(--surface-2)));
+    background:
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 44px,
+        rgb(var(--foreground) / 0.02) 44px,
+        rgb(var(--foreground) / 0.02) 45px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 44px,
+        rgb(var(--foreground) / 0.02) 44px,
+        rgb(var(--foreground) / 0.02) 45px
+      ),
+      linear-gradient(
+        140deg,
+        rgb(var(--surface-2)),
+        rgb(var(--background)) 52%,
+        rgb(var(--surface-1))
+      );
+  }
+  
+  .dark .panel-route::before {
+    background:
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 44px,
+        rgb(var(--border) / 0.04) 44px,
+        rgb(var(--border) / 0.04) 45px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 44px,
+        rgb(var(--border) / 0.04) 44px,
+        rgb(var(--border) / 0.04) 45px
+      ),
+      linear-gradient(
+        140deg,
+        rgb(var(--night) / 0.98),
+        rgb(var(--surface-1) / 0.9) 52%,
+        rgb(var(--surface-2) / 0.86)
+      );
   }
 
   .panel-route-rocket::before {
@@ -189,16 +238,33 @@
   }
 
   .panel-night::before {
+    background: radial-gradient(circle at 85% 0%, rgb(var(--primary) / 0.15), transparent 55%),
+      linear-gradient(160deg, rgb(var(--surface-2) / 0.9), rgb(var(--surface-1)));
+  }
+
+  .dark .panel-night::before {
     background: radial-gradient(circle at 85% 0%, rgb(var(--primary) / 0.22), transparent 55%),
       linear-gradient(160deg, rgb(var(--night) / 0.9), rgb(var(--surface-1)));
   }
 
   .panel-glow::before {
+    background: radial-gradient(circle at 50% 10%, rgb(var(--accent) / 0.15), transparent 60%),
+      linear-gradient(120deg, rgb(var(--surface-2) / 0.5), rgb(var(--surface-1) / 0.5));
+  }
+  
+  .dark .panel-glow::before {
     background: radial-gradient(circle at 50% 10%, rgb(var(--accent) / 0.22), transparent 60%),
       linear-gradient(120deg, rgb(var(--surface-2)), rgb(var(--surface-1)));
   }
 
   .panel-mountains::before {
+    background:
+      linear-gradient(120deg, rgb(var(--surface-2) / 0.9), transparent 55%),
+      linear-gradient(240deg, rgb(var(--surface-1) / 0.9), transparent 60%),
+      linear-gradient(180deg, rgb(var(--primary) / 0.1), transparent 70%);
+  }
+  
+  .dark .panel-mountains::before {
     background:
       linear-gradient(120deg, rgb(var(--surface-2) / 0.9), transparent 55%),
       linear-gradient(240deg, rgb(var(--surface-1) / 0.9), transparent 60%),
