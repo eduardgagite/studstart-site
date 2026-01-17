@@ -32,7 +32,7 @@ export default function Home() {
               <p className="section-eyebrow">Форум первокурсников СОГУ</p>
               <h1 className="text-4xl font-semibold md:text-5xl lg:text-6xl">
                 {heroContent.title}
-                <span className="mt-4 block text-2xl text-gradient md:text-3xl lg:text-4xl">твой старт в активизм</span>
+                <span className="mt-4 block text-2xl text-gradient md:text-3xl lg:text-4xl">твой старт в студенческую жизнь</span>
               </h1>
               <p className="text-lg text-muted md:text-xl">{heroContent.subtitle}</p>
               <p className="max-w-xl text-base text-muted">{heroContent.description}</p>
