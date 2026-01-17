@@ -61,7 +61,7 @@ export const organizers = [
   },
   {
     name: "Профком СОГУ",
-    description: "Профсоюзный комитет студентов",
+    description: "Первичная профсоюзная организация СОГУ",
     logo: "/images/logo-profkom.png",
   },
 ];
