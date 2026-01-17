@@ -3,6 +3,7 @@ import { heroContent, photoGrid, vkAlbumUrl, organizers } from "@/data/home";
 import { siteConfig } from "@/config/site";
 import { assetPath } from "@/lib/assets";
 import { HomeScrollTracker } from "@/components/home-scroll-tracker";
+import { RouteSection } from "@/components/route-section";
 import { cn } from "@/lib/cn";
 
 const highlights = [
@@ -32,13 +33,6 @@ const highlights = [
   },
 ];
 
-const routeTitles = ["Заявка", "Проверка", "Собеседование", "Форум"];
-const routeNotes = [
-  "Оставляешь данные, чтобы мы познакомились.",
-  "Команда форума внимательно смотрит заявки.",
-  "Короткая встреча, чтобы узнать друг друга ближе.",
-  "Стартовая точка твоей студенческой истории.",
-];
 
 export default function Home() {
   return (
@@ -53,10 +47,7 @@ export default function Home() {
       >
         <div className="section-inner">
           <div
-            className="section-shell relative overflow-hidden"
-            style={{
-              backgroundImage: `linear-gradient(150deg, rgba(11,16,32,0.95), rgba(11,16,32,0.75))`,
-            }}
+            className="section-shell hero-section-shell relative overflow-hidden"
           >
           <div className="absolute -right-10 top-10 hidden h-40 w-40 rounded-full bg-accent/30 blur-3xl md:block" />
           <div className="absolute -left-20 bottom-0 h-52 w-52 rounded-full bg-primary/30 blur-3xl" />
@@ -139,66 +130,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="howto" className="section-panel panel-route">
-        <div className="section-inner space-y-10">
-          <div className="max-w-2xl space-y-3">
-            <p className="section-eyebrow">Путь к СтудСтарту</p>
-            <h2 className="text-4xl font-semibold md:text-5xl">Маршрут участника</h2>
-            <p className="route-subtitle text-sm md:text-base">
-              Путь построен как маршрут: от заявки до старта в горах.
-            </p>
-          </div>
-          <div className="route-grid">
-            <svg
-              className="route-path"
-              viewBox="0 0 100 20"
-              preserveAspectRatio="none"
-              aria-hidden="true"
-            >
-              <defs>
-                <linearGradient id="route-gradient" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0%" stopColor="var(--route-accent)" />
-                  <stop offset="50%" stopColor="var(--route-primary)" />
-                  <stop offset="100%" stopColor="var(--route-accent)" />
-                </linearGradient>
-                <filter id="route-glow" x="-30%" y="-30%" width="160%" height="160%">
-                  <feGaussianBlur stdDeviation="6" result="blur" />
-                  <feMerge>
-                    <feMergeNode in="blur" />
-                    <feMergeNode in="SourceGraphic" />
-                  </feMerge>
-                </filter>
-              </defs>
-              <path
-                className="route-path-glow"
-                d="M12.5 10 C 22.5 2, 30 18, 37.5 10 S 52.5 2, 62.5 10 S 77.5 18, 87.5 10"
-              />
-              <path
-                className="route-path-line"
-                d="M12.5 10 C 22.5 2, 30 18, 37.5 10 S 52.5 2, 62.5 10 S 77.5 18, 87.5 10"
-              />
-            </svg>
-            <ol className="route-steps" aria-label="Маршрут участника">
-              {routeNotes.map((note, index) => (
-                <li
-                  key={routeTitles[index]}
-                  className={cn("route-step", index === 0 && "route-step-active")}
-                >
-                  <div className="route-marker">
-                    <span className="route-dot">{index + 1}</span>
-                  </div>
-                  <div className="route-card glass-card p-6">
-                    <h3 className="text-base font-semibold md:text-lg">
-                      {routeTitles[index]}
-                    </h3>
-                    <p className="mt-3 text-sm text-muted md:text-base">{note}</p>
-                  </div>
-                </li>
-              ))}
-            </ol>
-          </div>
-        </div>
-      </section>
+      <RouteSection />
 
       <section id="photos" className="section-panel panel-night">
         <div className="section-inner space-y-8">
@@ -247,9 +179,9 @@ export default function Home() {
             {organizers.map((item) => (
               <div
                 key={item.name}
-                className="group relative flex h-full min-h-[320px] flex-col items-center justify-center overflow-hidden rounded-xl border border-border/40 bg-surface/60 p-8 text-center backdrop-blur-xl transition-all duration-500 hover:border-primary/50 hover:shadow-[0_0_0_1px_rgb(var(--primary)/0.3),0_0_40px_rgb(var(--primary)/0.15)] md:min-h-[380px] md:p-10"
+                className="group relative flex h-full min-h-[320px] flex-col items-center justify-center overflow-hidden rounded-xl border border-border/60 bg-white/95 dark:border-border/40 dark:bg-surface/60 p-8 text-center backdrop-blur-xl transition-all duration-500 hover:border-primary/60 dark:hover:border-primary/50 hover:shadow-[0_0_0_1px_rgb(var(--primary)/0.25),0_0_40px_rgb(var(--primary)/0.1)] dark:hover:shadow-[0_0_0_1px_rgb(var(--primary)/0.3),0_0_40px_rgb(var(--primary)/0.15)] md:min-h-[380px] md:p-10"
               >
-                <div className="relative mb-8 flex h-64 w-64 items-center justify-center overflow-hidden rounded-2xl border border-border/30 bg-white/90 p-8 shadow-sm transition-all duration-500 group-hover:border-primary/40 group-hover:shadow-md md:h-72 md:w-72 md:p-10">
+                <div className="relative mb-8 flex h-64 w-64 items-center justify-center overflow-hidden rounded-2xl border border-border/60 bg-white dark:border-border/30 dark:bg-white/90 p-8 shadow-lg dark:shadow-sm transition-all duration-500 group-hover:border-primary/60 dark:group-hover:border-primary/40 group-hover:shadow-xl dark:group-hover:shadow-md md:h-72 md:w-72 md:p-10">
                   <img
                     src={assetPath(item.logo)}
                     alt={item.name}
