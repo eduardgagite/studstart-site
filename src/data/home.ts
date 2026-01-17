@@ -91,4 +91,9 @@ export const organizers = [
     description: "Первичная профсоюзная организация СОГУ",
     logo: "/images/logo-profkom.png",
   },
+  {
+    name: "Record Media",
+    description: "Студенческий медиацентр СОГУ",
+    logo: "/images/logo-record.png",
+  },
 ];

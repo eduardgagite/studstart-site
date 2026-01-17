@@ -61,6 +61,27 @@ const steps = [
     ),
   },
   {
+    title: "Очная встреча",
+    description: "Знакомство с командой и другими участниками форума.",
+    icon: (className: string) => (
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 24 24"
+        className={className}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+        <circle cx="9" cy="7" r="4" />
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+      </svg>
+    ),
+  },
+  {
     title: "Форум",
     description: "Стартовая точка твоей студенческой истории.",
     icon: (className: string) => (
@@ -98,12 +119,13 @@ const toInset = (radius: number) =>
 const plateInset = toInset(compassRadius + markerRadius + 10);
 const innerInset = toInset(innerRadius);
 const textInset = toInset(textRadius);
-const markerPositions = [
-  { x: compassCenter, y: compassCenter - markerOrbit },
-  { x: compassCenter + markerOrbit, y: compassCenter },
-  { x: compassCenter, y: compassCenter + markerOrbit },
-  { x: compassCenter - markerOrbit, y: compassCenter },
-];
+const markerPositions = steps.map((_, index) => {
+  const angle = (index / steps.length) * 2 * Math.PI - Math.PI / 2;
+  return {
+    x: compassCenter + Math.cos(angle) * markerOrbit,
+    y: compassCenter + Math.sin(angle) * markerOrbit,
+  };
+});
 
 export function RouteSection() {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -424,12 +446,12 @@ export function RouteSection() {
               <p className="text-[0.6rem] uppercase tracking-[0.26em] text-muted">
                 Журнал маршрута
               </p>
-              <span className="text-[0.6rem] uppercase tracking-[0.26em] text-muted whitespace-nowrap">
+              <span className="text-[0.6rem] uppercase tracking-[0.26em] text-muted whitespace-nowrap hidden sm:inline-block">
                 Полевая тетрадь
               </span>
             </div>
             
-            <div className="relative flex-1 overflow-hidden rounded-3xl border border-border/45 bg-surface/70 p-6 shadow-[var(--shadow-soft)] md:p-8">
+            <div className="relative flex-1 overflow-hidden rounded-3xl border border-border/45 bg-surface/70 p-4 shadow-[var(--shadow-soft)] md:p-8">
               {/* Фоновая сетка */}
               <div
                 className="pointer-events-none absolute inset-0 opacity-40"
@@ -452,10 +474,10 @@ export function RouteSection() {
                        const isLast = index === steps.length - 1;
                        
                        return (
-                        <div key={step.title} className="group relative flex gap-4 items-stretch">
+                        <div key={step.title} className="group relative flex gap-3 md:gap-4 items-stretch">
                            
                            {/* КОЛОНКА МАРКЕРА (Ось таймлайна) */}
-                          <div className="flex-none w-12 relative flex items-center justify-center">
+                          <div className="flex-none w-8 md:w-12 relative flex items-center justify-center">
                             {/* Линия вверх (до предыдущего шага) */}
                             {index > 0 && (
                               <div
@@ -513,7 +535,7 @@ export function RouteSection() {
                              >
                                {/* Иконка внутри карточки - высота 48px (h-12) */}
                                <div className={cn(
-                                 "flex-none h-12 w-12 rounded-lg border flex items-center justify-center transition-colors duration-300",
+                                 "flex-none h-10 w-10 md:h-12 md:w-12 rounded-lg border flex items-center justify-center transition-colors duration-300",
                                  isActive 
                                    ? "bg-primary/10 border-primary/30 text-primary" 
                                    : "bg-surface/50 border-border/30 text-muted group-hover:text-foreground group-hover:border-primary/20"

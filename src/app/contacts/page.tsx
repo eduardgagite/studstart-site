@@ -1,30 +1,15 @@
 import type { Metadata } from "next";
-import { contactItems } from "@/data/contacts";
+import { organizationContacts } from "@/data/contacts";
 import { OrganizersList } from "@/components/organizers-list";
 import { TrackedLink } from "@/components/tracked-link";
 import { getContactIcon } from "@/components/ui/icons";
 import { cn } from "@/lib/cn";
-import { FaArrowRight } from "react-icons/fa";
+import { assetPath } from "@/lib/assets";
 
 export const metadata: Metadata = {
   title: "Контакты",
   description: "Контакты и организаторы форума СтудСтарт.",
 };
-
-function getActionLabel(icon: string) {
-  switch (icon) {
-    case "phone":
-      return "Позвонить";
-    case "email":
-      return "Написать";
-    case "vk":
-    case "telegram":
-    case "instagram":
-      return "Подписаться";
-    default:
-      return "Перейти";
-  }
-}
 
 export default function ContactsPage() {
   return (
@@ -36,8 +21,8 @@ export default function ContactsPage() {
           <div className="absolute -right-20 -top-20 h-96 w-96 rounded-full bg-primary/10 blur-[100px]" />
           <div className="absolute -bottom-20 -left-20 h-96 w-96 rounded-full bg-accent/10 blur-[100px]" />
           
-          <div className="relative z-10 grid gap-12 lg:grid-cols-2 lg:gap-20">
-            <div className="flex flex-col justify-center space-y-6">
+          <div className="relative z-10 space-y-12">
+            <div className="flex flex-col justify-center space-y-6 text-center">
               <div className="space-y-4">
                 <p className="section-eyebrow">Контакты</p>
                 <h1 className="text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl">
@@ -46,41 +31,56 @@ export default function ContactsPage() {
                 </h1>
               </div>
               
-              <p className="max-w-md text-lg text-muted md:text-xl">
+              <p className="mx-auto max-w-md text-lg text-muted md:text-xl">
                 Есть вопросы или предложения? <br />
                 Мы открыты к общению!
               </p>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2">
-              {contactItems.map((item) => (
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {organizationContacts.map((org) => (
                 <div
-                  key={item.label}
+                  key={org.name}
                   className={cn(
-                    "group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-white/5 bg-white/5 p-6 backdrop-blur-md transition-all duration-300",
-                    "hover:border-primary/30 hover:bg-white/10 hover:shadow-glow hover:-translate-y-1"
+                    "group relative flex flex-col overflow-hidden rounded-3xl border border-border/50 bg-white/60 p-6 shadow-sm backdrop-blur-md transition-all duration-300",
+                    "hover:border-primary/30 hover:bg-white/80 hover:shadow-lg hover:-translate-y-1",
+                    "dark:bg-white/[0.08] dark:hover:bg-white/[0.12] dark:border-white/10"
                   )}
                 >
-                  <div className="flex items-center gap-4">
-                    <span className={cn(
-                      "flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white/10 text-2xl transition-colors group-hover:scale-110 group-hover:bg-primary/20 group-hover:text-primary"
-                    )}>
-                      {getContactIcon(item.icon)}
-                    </span>
+                  <div className="flex flex-1 flex-col items-center justify-center text-center">
+                    <div className="mb-6 flex h-24 w-24 items-center justify-center rounded-2xl bg-white p-3 shadow-sm transition-transform duration-500 group-hover:scale-110">
+                      <img
+                        src={assetPath(org.logo)}
+                        alt={org.name}
+                        className="h-full w-full object-contain"
+                      />
+                    </div>
                     
-                    <span className="block text-lg font-bold text-foreground transition-colors group-hover:text-primary">
-                      {item.label}
-                    </span>
+                    <h3 className="mb-2 text-xl font-bold text-foreground md:text-2xl">
+                      {org.name}
+                    </h3>
+                    <p className="mb-6 text-sm text-muted-foreground dark:text-blue-100/70">
+                      {org.description}
+                    </p>
                   </div>
 
-                  <TrackedLink
-                    href={item.href}
-                    goal={item.goal}
-                    className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-white/10 py-3 text-sm font-semibold transition-all hover:bg-primary hover:text-white group-hover:shadow-lg"
-                  >
-                    {getActionLabel(item.icon)}
-                    <FaArrowRight className="h-3 w-3" />
-                  </TrackedLink>
+                  <div className="flex w-full gap-3">
+                    {org.socials.map((social) => (
+                      <TrackedLink
+                        key={social.label}
+                        href={social.href}
+                        goal={social.goal as any}
+                        target="_blank"
+                        className={cn(
+                          "flex h-12 flex-1 items-center justify-center rounded-xl border border-border/50 bg-background/50 text-muted transition-all duration-300",
+                          "hover:border-primary/50 hover:bg-primary/10 hover:text-primary hover:scale-105"
+                        )}
+                        title={social.label}
+                      >
+                        {getContactIcon(social.icon, "h-5 w-5")}
+                      </TrackedLink>
+                    ))}
+                  </div>
                 </div>
               ))}
             </div>

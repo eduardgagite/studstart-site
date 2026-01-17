@@ -2,46 +2,11 @@
 
 import Link from "next/link";
 import { siteConfig } from "@/config/site";
-import { contactItems } from "@/data/contacts";
 import { navLinks } from "@/data/navigation";
+import { organizationContacts } from "@/data/contacts";
 import { TrackedLink } from "@/components/tracked-link";
-import { VKIcon, TelegramIcon, InstagramIcon, ArrowUpIcon, MapPinIcon } from "@/components/ui/icons";
+import { ArrowUpIcon, MapPinIcon, getContactIcon } from "@/components/ui/icons";
 import { cn } from "@/lib/cn";
-
-const socialItems = [
-  {
-    key: "vkSogu",
-    label: "VK СОГУ",
-    href: siteConfig.social.vkSogu,
-    goal: "click_vk_sogu_footer" as const,
-    icon: VKIcon,
-    color: "hover:bg-[#0077FF] hover:border-[#0077FF] hover:text-white",
-  },
-  {
-    key: "vkProfkom",
-    label: "VK Профком",
-    href: siteConfig.social.vkProfkom,
-    goal: "click_vk_profkom_footer" as const,
-    icon: VKIcon,
-    color: "hover:bg-[#0077FF] hover:border-[#0077FF] hover:text-white",
-  },
-  {
-    key: "telegram",
-    label: "Telegram",
-    href: siteConfig.social.telegram,
-    goal: "click_tg_footer" as const,
-    icon: TelegramIcon,
-    color: "hover:bg-[#2AABEE] hover:border-[#2AABEE] hover:text-white",
-  },
-  {
-    key: "instagram",
-    label: "Instagram",
-    href: siteConfig.social.instagram,
-    goal: "click_instagram_footer" as const,
-    icon: InstagramIcon,
-    color: "hover:bg-[#E1306C] hover:border-[#E1306C] hover:text-white",
-  },
-];
 
 export function SiteFooter() {
   const scrollToTop = () => {
@@ -74,7 +39,7 @@ export function SiteFooter() {
               
               <div className="flex items-center gap-2 text-sm text-muted/80">
                 <MapPinIcon className="text-primary/70" />
-                <span>г. Владикавказ, ул. Ватутина 44-46</span>
+                <span>{siteConfig.location}</span>
               </div>
             </div>
 
@@ -99,55 +64,61 @@ export function SiteFooter() {
             </div>
 
             {/* Socials & Actions */}
-            <div className="lg:col-span-3 space-y-6 flex flex-col justify-between">
-              <div className="space-y-6">
-                <h3 className="text-sm font-bold uppercase tracking-wider text-foreground/90">
-                  Мы в соцсетях
-                </h3>
-                <div className="flex flex-wrap gap-3">
-                  {socialItems.map((item) => (
-                    <TrackedLink
-                      key={item.key}
-                      href={item.href}
-                      goal={item.goal}
-                      target="_blank"
-                      rel="noreferrer"
-                      className={cn(
-                        "flex h-12 w-12 items-center justify-center rounded-2xl border border-border/60 bg-background/50 text-muted transition-all duration-300 hover:-translate-y-1 hover:shadow-lg",
-                        item.color
-                      )}
-                      aria-label={item.label}
-                    >
-                      <item.icon className="h-6 w-6" />
-                    </TrackedLink>
-                  ))}
-                </div>
+            <div className="lg:col-span-3 space-y-6">
+              <h3 className="text-sm font-bold uppercase tracking-wider text-foreground/90">
+                Мы в соцсетях
+              </h3>
+              <div className="space-y-5">
+                {organizationContacts
+                  .filter(org => org.name !== "СОГУ")
+                  .map((org) => (
+                  <div key={org.name} className="space-y-1.5">
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-muted/60">
+                      {org.name}
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {org.socials.map((social) => (
+                        <TrackedLink
+                          key={social.label}
+                          href={social.href}
+                          goal={social.goal as any}
+                          target="_blank"
+                          rel="noreferrer"
+                          className={cn(
+                            "flex h-8 w-8 items-center justify-center rounded-lg border border-border/60 bg-background/50 text-muted transition-all duration-300 hover:-translate-y-1 hover:shadow-md",
+                            social.icon === "vk" && "hover:bg-[#0077FF] hover:border-[#0077FF] hover:text-white",
+                            social.icon === "telegram" && "hover:bg-[#2AABEE] hover:border-[#2AABEE] hover:text-white",
+                            social.icon === "instagram" && "hover:bg-[#E1306C] hover:border-[#E1306C] hover:text-white"
+                          )}
+                          aria-label={`${org.name} ${social.label}`}
+                        >
+                          {getContactIcon(social.icon, "h-4 w-4")}
+                        </TrackedLink>
+                      ))}
+                    </div>
+                  </div>
+                ))}
               </div>
-
-              <button
-                onClick={scrollToTop}
-                className="group flex items-center gap-3 self-start md:self-auto text-sm font-medium text-muted hover:text-primary transition-colors"
-              >
-                <div className="flex h-10 w-10 items-center justify-center rounded-full border border-border/60 bg-background/50 group-hover:border-primary/50 group-hover:bg-primary/10 transition-all">
-                  <ArrowUpIcon className="group-hover:-translate-y-0.5 transition-transform" />
-                </div>
-                <span>Наверх</span>
-              </button>
             </div>
           </div>
 
-          <div className="mt-16 pt-8 border-t border-border/40 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-muted/60">
-            <p>© {new Date().getFullYear()} СтудСтарт. Все права защищены.</p>
-            <div className="flex items-center gap-6">
+          <div className="mt-12 pt-8 border-t border-border/40 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-muted/60">
+            <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8">
+              <p>© {new Date().getFullYear()} СтудСтарт. Все права защищены.</p>
               <Link href="/policy" className="hover:text-foreground transition-colors">
                 Политика конфиденциальности
               </Link>
-              {/* Optional: Add developer credit */}
-              {/* <span className="hidden md:inline">•</span>
-              <a href="#" className="hover:text-foreground transition-colors">
-                Design by ...
-              </a> */}
             </div>
+            
+            <button
+              onClick={scrollToTop}
+              className="group flex items-center gap-3 rounded-full border border-border/60 bg-background/50 py-1.5 pl-4 pr-1.5 text-xs font-medium text-muted transition-all hover:border-primary/50 hover:bg-primary/5 hover:text-primary"
+            >
+              <span>Наверх</span>
+              <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10 text-primary transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:bg-primary group-hover:text-white">
+                <ArrowUpIcon className="h-3 w-3" />
+              </div>
+            </button>
           </div>
         </div>
       </div>
