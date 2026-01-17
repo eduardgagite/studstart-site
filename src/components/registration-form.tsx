@@ -7,7 +7,7 @@ import { buildN8nPayload, getN8nWebhookUrl } from "@/lib/n8n";
 import { isRegistrationClosed } from "@/lib/registration";
 import { Button } from "@/components/ui/button";
 import { reachGoal } from "@/lib/ym";
-import { contactItems } from "@/data/contacts";
+import { organizationContacts } from "@/data/contacts";
 import { TrackedLink } from "@/components/tracked-link";
 import { cn } from "@/lib/cn";
 import { 
@@ -153,21 +153,29 @@ export function RegistrationForm() {
           Следите за новостями, чтобы не пропустить следующие мероприятия!
         </p>
         
-        <div className="mt-10 grid gap-4 sm:grid-cols-2">
-          {contactItems.map((item) => (
-            <TrackedLink
-              key={item.label}
-              href={item.href}
-              goal={item.goal}
-              className="group relative flex items-center justify-between rounded-xl border border-border/50 bg-surface/50 px-6 py-4 transition-all hover:border-primary/50 hover:bg-surface hover:shadow-glow"
-            >
-              <span className="font-medium text-muted transition-colors group-hover:text-foreground">
-                {item.label}
-              </span>
-              <span className="text-sm text-primary opacity-70 group-hover:opacity-100">
-                Перейти &rarr;
-              </span>
-            </TrackedLink>
+        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {organizationContacts.map((org) => (
+            <div key={org.name} className="flex flex-col space-y-3 rounded-2xl border border-border/50 bg-surface/30 p-5 backdrop-blur-sm">
+              <h3 className="font-semibold text-foreground/90">{org.name}</h3>
+              <div className="flex flex-col gap-2">
+                {org.socials.map((social) => (
+                  <TrackedLink
+                    key={`${org.name}-${social.label}`}
+                    href={social.href}
+                    goal={social.goal as any}
+                    target="_blank"
+                    className="group relative flex items-center justify-between rounded-xl border border-border/30 bg-surface/50 px-4 py-3 transition-all hover:border-primary/50 hover:bg-surface hover:shadow-sm"
+                  >
+                    <span className="text-sm font-medium text-muted transition-colors group-hover:text-foreground">
+                      {social.label}
+                    </span>
+                    <span className="text-xs text-primary opacity-70 group-hover:opacity-100">
+                      Перейти &rarr;
+                    </span>
+                  </TrackedLink>
+                ))}
+              </div>
+            </div>
           ))}
         </div>
       </div>
