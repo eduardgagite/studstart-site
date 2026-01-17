@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { TrackedButton } from "@/components/tracked-button";
 import { PageGoal } from "@/components/page-goal";
 import { assetPath } from "@/lib/assets";
+import { siteConfig } from "@/config/site";
 
 export const metadata: Metadata = {
   title: "Спасибо",
@@ -34,7 +35,7 @@ export default function ThanksPage() {
             Подписывайся на Telegram, чтобы быть в курсе новостей форума.
           </p>
           <TrackedButton
-            href="https://t.me/"
+            href={siteConfig.social.telegram}
             variant="ghost"
             goal="subscribe_news"
             target="_blank"

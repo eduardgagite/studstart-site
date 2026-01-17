@@ -1,38 +1,14 @@
 import { TrackedButton } from "@/components/tracked-button";
-import { heroContent, photoGrid, vkAlbumUrl, organizers } from "@/data/home";
+import { heroContent, photoGrid, vkAlbumUrl } from "@/data/home";
 import { siteConfig } from "@/config/site";
 import { assetPath } from "@/lib/assets";
 import { HomeScrollTracker } from "@/components/home-scroll-tracker";
 import { RouteSection } from "@/components/route-section";
 import { cn } from "@/lib/cn";
 
-const highlights = [
-  {
-    title: "Каникулы с пользой",
-    description: "Пять дней активности, где ты быстро находишь свой ритм.",
-  },
-  {
-    title: "Новые связи",
-    description: "Друзья, с которыми вы вместе будете учиться и отдыхать.",
-  },
-  {
-    title: "Командные форматы",
-    description: "Квесты, игры и задания, которые сближают и раскрывают.",
-  },
-  {
-    title: "Порог неба",
-    description: "Горы, чистый воздух и атмосферный старт студенческой жизни.",
-  },
-  {
-    title: "Наставники рядом",
-    description: "Кураторы и спикеры помогут и зададут верный вектор.",
-  },
-  {
-    title: "Энергия форума",
-    description: "Твои первые громкие впечатления в университете.",
-  },
-];
-
+import { OrganizersShowcase } from "@/components/organizers-showcase";
+import { PowerPoints } from "@/components/power-points";
+import { PhotoScatter } from "@/components/photo-scatter";
 
 export default function Home() {
   return (
@@ -56,7 +32,7 @@ export default function Home() {
               <p className="section-eyebrow">Форум первокурсников СОГУ</p>
               <h1 className="text-4xl font-semibold md:text-5xl lg:text-6xl">
                 {heroContent.title}
-                <span className="block text-gradient">ночной старт</span>
+                <span className="mt-4 block text-2xl text-gradient md:text-3xl lg:text-4xl">твой старт в активизм</span>
               </h1>
               <p className="text-lg text-muted md:text-xl">{heroContent.subtitle}</p>
               <p className="max-w-xl text-base text-muted">{heroContent.description}</p>
@@ -98,37 +74,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="about" className="section-panel panel-glow">
-        <div className="section-inner space-y-8">
-          <div className="flex flex-wrap items-end justify-between gap-6">
-            <div className="space-y-2">
-              <p className="section-eyebrow">Почему СтудСтарт</p>
-              <h2 className="text-3xl font-semibold md:text-4xl">Точки силы</h2>
-            </div>
-            <p className="max-w-md text-sm text-muted md:text-base">
-              Всё, что нужно первокурснику, чтобы почувствовать уверенность и
-              поддержку в новом городе.
-            </p>
-          </div>
-          <div className="grid gap-5 md:grid-cols-3">
-            {highlights.map((item, index) => (
-              <div
-                key={item.title}
-                className={cn(
-                  "glass-card p-6",
-                  index === 0 && "md:col-span-2"
-                )}
-              >
-                <p className="text-xs uppercase tracking-[0.3em] text-muted">
-                  0{index + 1}
-                </p>
-                <h3 className="mt-4 text-lg font-semibold md:text-xl">{item.title}</h3>
-                <p className="mt-3 text-sm text-muted md:text-base">{item.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <PowerPoints />
 
       <RouteSection />
 
@@ -149,23 +95,8 @@ export default function Home() {
               Смотреть альбом VK
             </TrackedButton>
           </div>
-          <div className="grid auto-rows-[160px] gap-4 md:grid-cols-3 md:auto-rows-[200px]">
-            {photoGrid.map((photo, index) => (
-              <div
-                key={photo.id}
-                className={cn(
-                  "overflow-hidden rounded-md border border-border/60 bg-surface",
-                  index === 0 && "md:col-span-2 md:row-span-2"
-                )}
-              >
-                <img
-                  src={assetPath(photo.src)}
-                  alt={photo.alt}
-                  className="h-full w-full object-cover"
-                />
-              </div>
-            ))}
-          </div>
+          
+          <PhotoScatter photos={photoGrid} albumUrl={vkAlbumUrl} />
         </div>
       </section>
 
@@ -175,28 +106,7 @@ export default function Home() {
             <p className="section-eyebrow">Команда</p>
             <h2 className="text-3xl font-semibold md:text-4xl">Кто делает СтудСтарт</h2>
           </div>
-          <div className="grid gap-6 md:grid-cols-2 lg:gap-8">
-            {organizers.map((item) => (
-              <div
-                key={item.name}
-                className="group relative flex h-full min-h-[320px] flex-col items-center justify-center overflow-hidden rounded-xl border border-border/60 bg-white/95 dark:border-border/40 dark:bg-surface/60 p-8 text-center backdrop-blur-xl transition-all duration-500 hover:border-primary/60 dark:hover:border-primary/50 hover:shadow-[0_0_0_1px_rgb(var(--primary)/0.25),0_0_40px_rgb(var(--primary)/0.1)] dark:hover:shadow-[0_0_0_1px_rgb(var(--primary)/0.3),0_0_40px_rgb(var(--primary)/0.15)] md:min-h-[380px] md:p-10"
-              >
-                <div className="relative mb-8 flex h-64 w-64 items-center justify-center overflow-hidden rounded-2xl border border-border/60 bg-white dark:border-border/30 dark:bg-white/90 p-8 shadow-lg dark:shadow-sm transition-all duration-500 group-hover:border-primary/60 dark:group-hover:border-primary/40 group-hover:shadow-xl dark:group-hover:shadow-md md:h-72 md:w-72 md:p-10">
-                  <img
-                    src={assetPath(item.logo)}
-                    alt={item.name}
-                    className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-105"
-                  />
-                </div>
-                <h3 className="mb-6 text-2xl font-semibold transition-colors duration-300 group-hover:text-primary md:text-3xl">
-                  {item.name}
-                </h3>
-                <p className="text-sm leading-relaxed text-muted md:text-base">
-                  {item.description}
-                </p>
-              </div>
-            ))}
-          </div>
+          <OrganizersShowcase />
         </div>
       </section>
 

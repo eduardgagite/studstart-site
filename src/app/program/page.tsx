@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { programDays } from "@/data/program";
 import { TrackedButton } from "@/components/tracked-button";
 import { assetPath } from "@/lib/assets";
+import { ProgramTimeline } from "@/components/program-timeline";
 
 export const metadata: Metadata = {
   title: "Программа",
@@ -10,50 +11,31 @@ export const metadata: Metadata = {
 
 export default function ProgramPage() {
   return (
-    <div className="space-y-10 pt-10 pb-10">
-      <section className="section-shell section-sky flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <p className="section-eyebrow">Программа</p>
-          <h1 className="text-3xl font-semibold">Пять дней, пять историй</h1>
-          <p className="mt-2 text-muted">
-            Формат, который сочетает обучение, командную работу и атмосферные вечера.
+    <div className="space-y-12 pt-10 pb-20">
+      {/* Hero секция страницы */}
+      <section className="section-shell section-sky flex flex-wrap items-end justify-between gap-6 pb-8 border-b border-border/40">
+        <div className="max-w-2xl">
+          <p className="section-eyebrow text-primary">Расписание форума</p>
+          <h1 className="text-4xl font-bold md:text-5xl mt-2">
+            Путь к вершине
+          </h1>
+          <p className="mt-4 text-lg text-muted leading-relaxed">
+            Пять насыщенных дней: от знакомства и командной работы до защиты проектов и вечеров под звездами.
           </p>
         </div>
         <TrackedButton
           href={assetPath("/program.pdf")}
           variant="secondary"
           goal="download_program"
+          className="shrink-0"
         >
-          Скачать программу PDF
+          Скачать PDF версию
         </TrackedButton>
       </section>
 
-      <section className="section-shell section-glow space-y-4">
-        {programDays.map((day, index) => (
-          <details
-            key={day.date}
-            className="group glass-card p-5"
-            open={index === 0}
-          >
-            <summary className="flex cursor-pointer flex-wrap items-center justify-between gap-3 text-lg font-semibold">
-              <span>{day.date}</span>
-              <span className="flex items-center gap-2 text-sm font-normal text-muted">
-                {day.label}
-                <span className="text-base text-primary transition group-open:rotate-45">+</span>
-              </span>
-            </summary>
-            <ul className="mt-4 space-y-3 text-sm text-muted">
-              {day.entries.map((entry) => (
-                <li key={`${day.date}-${entry.time}`} className="flex gap-3">
-                  <span className="min-w-[64px] font-semibold text-foreground">
-                    {entry.time}
-                  </span>
-                  <span>{entry.title}</span>
-                </li>
-              ))}
-            </ul>
-          </details>
-        ))}
+      {/* Основной компонент программы */}
+      <section className="section-shell">
+        <ProgramTimeline days={programDays} />
       </section>
     </div>
   );

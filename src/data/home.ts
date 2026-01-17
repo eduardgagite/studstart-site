@@ -45,13 +45,40 @@ export const participationSteps = [
   "Участвуешь в форуме 8–12 февраля",
 ];
 
-export const photoGrid = Array.from({ length: 6 }).map((_, index) => ({
-  id: `photo-${index + 1}`,
-  alt: "Фото с форума",
-  src: "/images/placeholder-photo.svg",
-}));
+export const photoGrid = [
+  {
+    id: "photo-1",
+    alt: "Атмосфера СтудСтарта 1",
+    src: "/images/atmosphere/photo-1.jpg",
+  },
+  {
+    id: "photo-2",
+    alt: "Атмосфера СтудСтарта 2",
+    src: "/images/atmosphere/photo-2.jpg",
+  },
+  {
+    id: "photo-3",
+    alt: "Атмосфера СтудСтарта 3",
+    src: "/images/atmosphere/photo-3.jpg",
+  },
+  {
+    id: "photo-4",
+    alt: "Атмосфера СтудСтарта 4",
+    src: "/images/atmosphere/photo-4.jpg",
+  },
+  {
+    id: "photo-5",
+    alt: "Атмосфера СтудСтарта 5",
+    src: "/images/atmosphere/photo-5.jpg",
+  },
+  {
+    id: "photo-6",
+    alt: "Атмосфера СтудСтарта 6",
+    src: "/images/atmosphere/photo-6.jpg",
+  },
+];
 
-export const vkAlbumUrl = "https://vk.com/";
+export const vkAlbumUrl = "https://vk.ru/album-210657216_307649375";
 
 export const organizers = [
   {
