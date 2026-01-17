@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" fill="none">
+  <rect width="800" height="600" rx="32" fill="#111A33" />
+  <rect x="40" y="40" width="720" height="520" rx="24" fill="#16224A" />
+  <path d="M120 420L280 260L420 380L540 260L680 420" stroke="#2BE4FF" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" />
+  <circle cx="240" cy="220" r="48" fill="#4DA3FF" />
+  <text x="400" y="500" text-anchor="middle" font-size="32" fill="#EAF0FF" font-family="sans-serif">
+    Фото форума
+  </text>
+</svg>
