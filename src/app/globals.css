@@ -1,0 +1,286 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: rgb(var(--background));
+  --color-foreground: rgb(var(--foreground));
+  --color-muted: rgb(var(--muted));
+  --color-surface: rgb(var(--surface-1));
+  --color-surface-2: rgb(var(--surface-2));
+  --color-border: rgb(var(--border));
+  --color-primary: rgb(var(--primary));
+  --color-accent: rgb(var(--accent));
+  --color-mint: rgb(var(--mint));
+  --color-night: rgb(var(--night));
+  --color-ice: rgb(var(--ice));
+
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+
+  --shadow-soft: 0 12px 30px rgb(0 0 0 / 0.25);
+  --shadow-card: 0 20px 60px rgb(6 12 28 / 0.35);
+  --shadow-glow: 0 0 0 1px rgb(var(--primary) / 0.35), 0 0 24px rgb(var(--primary) / 0.2);
+}
+
+:root {
+  --background: 246 248 255;
+  --foreground: 11 16 32;
+  --muted: 76 90 122;
+  --surface-1: 238 242 255;
+  --surface-2: 224 230 255;
+  --border: 206 214 240;
+  --primary: 77 163 255;
+  --accent: 43 228 255;
+  --mint: 0 209 143;
+  --night: 12 20 40;
+  --ice: 210 226 255;
+}
+
+.dark {
+  --background: 11 16 32;
+  --foreground: 234 240 255;
+  --muted: 169 180 208;
+  --surface-1: 17 26 51;
+  --surface-2: 22 34 74;
+  --border: 36 52 94;
+  --primary: 77 163 255;
+  --accent: 43 228 255;
+  --mint: 0 209 143;
+  --night: 6 12 28;
+  --ice: 162 190 255;
+}
+
+@layer base {
+  * {
+    border-color: rgb(var(--border));
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-sans);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+  }
+
+  summary {
+    list-style: none;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply rounded-md border border-border/70 bg-surface/80 backdrop-blur transition duration-300 ease-out hover:-translate-y-1 hover:border-primary/40;
+    box-shadow: var(--shadow-card);
+  }
+
+  .section-shell {
+    @apply rounded-xl border border-border/60 p-6 md:p-10;
+    box-shadow: var(--shadow-soft);
+  }
+
+  .section-panel {
+    position: relative;
+    padding: 3rem 0;
+  }
+
+  .section-panel::before,
+  .section-panel::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+  }
+
+  .section-panel::after {
+    background: linear-gradient(180deg, transparent, rgb(var(--background)) 85%);
+    opacity: 0.25;
+  }
+
+  .section-inner {
+    position: relative;
+    z-index: 1;
+  }
+
+  .section-sky {
+    background: radial-gradient(circle at 10% 0%, rgb(var(--accent) / 0.25), transparent 55%),
+      linear-gradient(140deg, rgb(var(--surface-2)), rgb(var(--surface-1)));
+  }
+
+  .section-night {
+    background: radial-gradient(circle at 85% 0%, rgb(var(--primary) / 0.25), transparent 55%),
+      linear-gradient(160deg, rgb(var(--night) / 0.9), rgb(var(--surface-1)));
+  }
+
+  .section-route {
+    background: radial-gradient(circle at 20% 0%, rgb(var(--mint) / 0.25), transparent 55%),
+      linear-gradient(160deg, rgb(var(--surface-1)), rgb(var(--surface-2)));
+  }
+
+  .section-glow {
+    background: radial-gradient(circle at 50% 10%, rgb(var(--accent) / 0.25), transparent 60%),
+      linear-gradient(120deg, rgb(var(--surface-2)), rgb(var(--surface-1)));
+  }
+
+  .panel-sky::before {
+    background: radial-gradient(circle at 10% 0%, rgb(var(--accent) / 0.22), transparent 55%),
+      linear-gradient(140deg, rgb(var(--surface-2)), rgb(var(--surface-1)));
+  }
+
+  .panel-route::before {
+    background: radial-gradient(circle at 20% 0%, rgb(var(--mint) / 0.22), transparent 55%),
+      linear-gradient(160deg, rgb(var(--surface-1)), rgb(var(--surface-2)));
+  }
+
+  .panel-night::before {
+    background: radial-gradient(circle at 85% 0%, rgb(var(--primary) / 0.22), transparent 55%),
+      linear-gradient(160deg, rgb(var(--night) / 0.9), rgb(var(--surface-1)));
+  }
+
+  .panel-glow::before {
+    background: radial-gradient(circle at 50% 10%, rgb(var(--accent) / 0.22), transparent 60%),
+      linear-gradient(120deg, rgb(var(--surface-2)), rgb(var(--surface-1)));
+  }
+
+  .panel-mountains::before {
+    background:
+      linear-gradient(120deg, rgb(var(--surface-2) / 0.9), transparent 55%),
+      linear-gradient(240deg, rgb(var(--surface-1) / 0.9), transparent 60%),
+      linear-gradient(180deg, rgb(var(--night) / 0.5), transparent 70%);
+  }
+
+  .hero-mountains {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  .route-grid {
+    position: relative;
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .route-grid {
+      gap: 2rem;
+    }
+  }
+
+  .route-step {
+    position: relative;
+    display: flex;
+    gap: 1rem;
+  }
+
+  .route-dot {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    height: 2.5rem;
+    width: 2.5rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    border: 1px solid rgb(var(--border));
+    background: rgb(var(--background));
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: rgb(var(--foreground));
+  }
+
+  @media (min-width: 768px) {
+    .route-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .route-grid::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 1.25rem;
+      height: 2px;
+      background: linear-gradient(90deg, rgb(var(--primary)), rgb(var(--accent)), rgb(var(--mint)));
+    }
+
+    .route-step {
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+  }
+
+  .section-eyebrow {
+    @apply text-xs uppercase tracking-[0.32em] text-muted;
+  }
+
+  .text-gradient {
+    background: linear-gradient(120deg, rgb(var(--primary)), rgb(var(--accent)));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}
+
+@layer utilities {
+  .bg-hero {
+    background: radial-gradient(circle at 20% 20%, rgb(var(--accent) / 0.35), transparent 50%),
+      radial-gradient(circle at 80% 10%, rgb(var(--primary) / 0.35), transparent 55%),
+      linear-gradient(140deg, rgb(var(--surface-2)), rgb(var(--surface-1)));
+  }
+
+  .bg-mountains {
+    background:
+      linear-gradient(120deg, rgb(var(--surface-2) / 0.9), transparent 55%),
+      linear-gradient(240deg, rgb(var(--surface-1) / 0.9), transparent 60%),
+      linear-gradient(180deg, rgb(var(--night) / 0.5), transparent 70%);
+  }
+
+  .animate-fade-up {
+    animation: fade-up 0.8s ease both;
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
