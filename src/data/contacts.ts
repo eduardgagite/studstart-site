@@ -1,3 +1,5 @@
+import type { MetrikaGoal } from "@/lib/ym";
+
 export const contactItems = [
   {
     label: "VK СОГУ",
@@ -27,4 +29,10 @@ export const contactItems = [
     goal: "click_instagram",
     icon: "instagram",
   },
-];
+] satisfies {
+  label: string;
+  value: string;
+  href: string;
+  goal: MetrikaGoal;
+  icon: string;
+}[];

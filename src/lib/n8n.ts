@@ -1,4 +1,7 @@
-export type RegistrationFields = Record<string, string | number | boolean | null>;
+export type RegistrationFields = Record<
+  string,
+  string | number | boolean | null | RegistrationMetadata
+>;
 
 export type RegistrationMetadata = {
   timestamp: string;
