@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
+import { useTheme } from "next-themes";
 import { navLinks } from "@/data/navigation";
 import { siteConfig } from "@/config/site";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -13,6 +14,12 @@ import { reachGoal } from "@/lib/ym";
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (open) {
@@ -47,22 +54,18 @@ export function SiteHeader() {
           className="group flex items-center gap-3 relative z-50" 
           onClick={() => setOpen(false)}
         >
-          <div className="relative flex h-10 w-10 md:h-11 md:w-11 items-center justify-center overflow-hidden rounded-full border border-border/60 bg-surface/80 transition-colors group-hover:border-primary/50 group-hover:bg-primary/10">
+          <div className="relative h-8 w-32 md:h-10 md:w-40">
             <Image
-              src="/images/logo-studstart.png"
+              src={
+                mounted && resolvedTheme === "dark"
+                  ? "/images/logo-horizontal-white.png"
+                  : "/images/logo-horizontal-black.png"
+              }
               alt="StudStart Logo"
               fill
-              className="object-cover"
+              className="object-contain"
+              priority
             />
-          </div>
-          <div className="flex flex-col leading-none">
-            <span className="text-xl font-black tracking-tight md:text-2xl">
-              <span className="text-foreground">Студ</span>
-              <span className="text-gradient">Старт</span>
-            </span>
-            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted transition-colors group-hover:text-primary">
-              Твой путь
-            </span>
           </div>
         </Link>
 
