@@ -1,6 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
+import { useEffect, useState } from "react";
+import { useTheme } from "next-themes";
 import { siteConfig } from "@/config/site";
 import { navLinks } from "@/data/navigation";
 import { organizationContacts } from "@/data/contacts";
@@ -12,6 +15,12 @@ export function SiteFooter() {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <footer className="relative">
@@ -28,10 +37,20 @@ export function SiteFooter() {
             
             {/* Brand Section */}
             <div className="lg:col-span-5 space-y-6">
-              <div className="space-y-4">
-                <h2 className="text-3xl font-bold tracking-tight">
-                  <span className="text-gradient">СтудСтарт</span>
-                </h2>
+              <div className="space-y-6">
+                <div className="relative h-12 w-48 md:h-14 md:w-64 -ml-1">
+                  <Image
+                    src={
+                      mounted && resolvedTheme === "dark"
+                        ? "/images/logo-horizontal-white.png"
+                        : "/images/logo-horizontal-black.png"
+                    }
+                    alt="StudStart Logo"
+                    fill
+                    className="object-contain object-left"
+                    priority
+                  />
+                </div>
                 <p className="max-w-xs text-base text-muted/80 leading-relaxed">
                   {siteConfig.description}
                 </p>
