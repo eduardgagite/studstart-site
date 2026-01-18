@@ -100,10 +100,42 @@ export const PowerPoints = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const [isVisible, setIsVisible] = useState(false);
 
-  // Constants for orbit
   const radiusX = 420; // horizontal radius
   const radiusY = 150; // vertical radius (depth)
   const speed = 0.0002; // rotation speed
+
+  const mobileContainerRef = useRef<HTMLDivElement>(null);
+  const [mobileActiveIndex, setMobileActiveIndex] = useState(0);
+
+  const handleMobileScroll = () => {
+    if (!mobileContainerRef.current) return;
+    const container = mobileContainerRef.current;
+    
+    // Calculate center of container
+    const containerCenter = container.scrollLeft + container.clientWidth / 2;
+    
+    // Find the card closest to the center
+    // We assume the children of mobileContainer are the cards
+    const cardElements = Array.from(container.children) as HTMLElement[];
+    let closestIndex = 0;
+    let closestDistance = Infinity;
+
+    cardElements.forEach((card, index) => {
+      // offsetLeft is relative to the scroll parent if positioned, 
+      // but here we just need relative position in the track
+      const cardCenter = card.offsetLeft + card.clientWidth / 2;
+      const distance = Math.abs(containerCenter - cardCenter);
+      
+      if (distance < closestDistance) {
+        closestDistance = distance;
+        closestIndex = index;
+      }
+    });
+
+    if (closestIndex !== mobileActiveIndex) {
+      setMobileActiveIndex(closestIndex);
+    }
+  };
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -334,46 +366,55 @@ export const PowerPoints = () => {
           </div>
         </div>
 
-          {/* Mobile Accordion View */}
-          <div className={styles.mobileList}>
-            {cards.map((card) => {
-              const isActive = activeCardId === card.id;
-              return (
-                <div 
-                  key={card.id} 
-                  className={`${styles.mobileItem} ${isActive ? styles.active : ''}`}
-                >
-                  <button
-                    className={styles.mobileHeader}
-                    onClick={() => handleCardClick(card.id)}
-                    aria-expanded={isActive}
-                    aria-controls={`content-${card.id}`}
-                  >
-                    <span className={styles.mobileNumber}>{card.number}</span>
-                    <span className={styles.mobileTitle}>{card.title}</span>
-                    <div className={`${styles.mobileIcon} ${isActive ? 'rotate-180' : ''} transition-transform`}>
-                      {isActive ? (
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <path d="M18 15l-6-6-6 6"/>
-                        </svg>
-                      ) : (
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <path d="M6 9l6 6 6-6"/>
-                        </svg>
-                      )}
-                    </div>
-                  </button>
+          {/* Mobile Carousel View */}
+          <div className={styles.mobileCarouselWrapper}>
+            <div 
+              ref={mobileContainerRef}
+              className={styles.mobileTrack}
+              onScroll={handleMobileScroll}
+            >
+              {cards.map((card, index) => {
+                const isActive = index === mobileActiveIndex;
+                return (
                   <div 
-                    id={`content-${card.id}`}
-                    className={`${styles.mobileContent} ${isActive ? 'block' : 'hidden'}`}
-                    role="region"
-                    aria-labelledby={`header-${card.id}`}
+                    key={card.id} 
+                    className={`${styles.mobileCard} ${isActive ? styles.mobileCardActive : ''}`}
                   >
-                    {card.description}
+                    <div className={styles.mobileCardInner}>
+                      <div className={styles.mobileCardHeader}>
+                        <div className={styles.mobileCardIcon}>
+                          {card.icon}
+                        </div>
+                        <span className={styles.mobileCardNumber}>{card.number}</span>
+                      </div>
+                      <h3 className={styles.mobileCardTitle}>{card.title}</h3>
+                      <p className={styles.mobileCardDescription}>{card.description}</p>
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
+            
+            {/* Pagination Dots */}
+            <div className={styles.mobileIndicators}>
+              {cards.map((_, index) => (
+                <div 
+                  key={index}
+                  className={`${styles.mobileDot} ${index === mobileActiveIndex ? styles.mobileDotActive : ''}`}
+                  onClick={() => {
+                    if (mobileContainerRef.current) {
+                      const card = mobileContainerRef.current.children[index] as HTMLElement;
+                      if (card) {
+                        mobileContainerRef.current.scrollTo({
+                          left: card.offsetLeft - (mobileContainerRef.current.clientWidth - card.clientWidth) / 2,
+                          behavior: 'smooth'
+                        });
+                      }
+                    }
+                  }}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </div>
