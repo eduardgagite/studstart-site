@@ -10,6 +10,7 @@ import { organizationContacts } from "@/data/contacts";
 import { TrackedLink } from "@/components/tracked-link";
 import { ArrowUpIcon, MapPinIcon, getContactIcon } from "@/components/ui/icons";
 import { cn } from "@/lib/cn";
+import { assetPath } from "@/lib/assets";
 
 export function SiteFooter() {
   const scrollToTop = () => {
@@ -42,8 +43,8 @@ export function SiteFooter() {
                   <Image
                     src={
                       mounted && resolvedTheme === "dark"
-                        ? "/images/logo-horizontal-white.png"
-                        : "/images/logo-horizontal-black.png"
+                        ? assetPath("/images/logo-horizontal-white.png")
+                        : assetPath("/images/logo-horizontal-black.png")
                     }
                     alt="StudStart Logo"
                     fill
