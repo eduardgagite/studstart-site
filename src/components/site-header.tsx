@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { VKIcon, TelegramIcon, InstagramIcon } from "@/components/ui/icons";
 import { cn } from "@/lib/cn";
 import { reachGoal } from "@/lib/ym";
+import { assetPath } from "@/lib/assets";
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
@@ -58,8 +59,8 @@ export function SiteHeader() {
             <Image
               src={
                 mounted && resolvedTheme === "dark"
-                  ? "/images/logo-horizontal-white.png"
-                  : "/images/logo-horizontal-black.png"
+                  ? assetPath("/images/logo-horizontal-white.png")
+                  : assetPath("/images/logo-horizontal-black.png")
               }
               alt="StudStart Logo"
               fill
