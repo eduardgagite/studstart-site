@@ -47,24 +47,14 @@ export const participationSteps = [
 
 export const photoGrid = [
   {
-    id: "photo-1",
-    alt: "Атмосфера СтудСтарта 1",
-    src: "/images/atmosphere/photo-1.jpg",
-  },
-  {
-    id: "photo-2",
-    alt: "Атмосфера СтудСтарта 2",
-    src: "/images/atmosphere/photo-2.jpg",
-  },
-  {
-    id: "photo-3",
-    alt: "Атмосфера СтудСтарта 3",
-    src: "/images/atmosphere/photo-3.jpg",
-  },
-  {
     id: "photo-4",
     alt: "Атмосфера СтудСтарта 4",
     src: "/images/atmosphere/photo-4.jpg",
+  },
+  {
+    id: "photo-1",
+    alt: "Атмосфера СтудСтарта 1",
+    src: "/images/atmosphere/photo-1.jpg",
   },
   {
     id: "photo-5",
@@ -72,9 +62,19 @@ export const photoGrid = [
     src: "/images/atmosphere/photo-5.jpg",
   },
   {
+    id: "photo-2",
+    alt: "Атмосфера СтудСтарта 2",
+    src: "/images/atmosphere/photo-2.jpg",
+  },
+  {
     id: "photo-6",
     alt: "Атмосфера СтудСтарта 6",
     src: "/images/atmosphere/photo-6.jpg",
+  },
+  {
+    id: "photo-3",
+    alt: "Атмосфера СтудСтарта 3",
+    src: "/images/atmosphere/photo-3.jpg",
   },
 ];
 
