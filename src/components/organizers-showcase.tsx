@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { organizers } from "@/data/home";
 import { assetPath } from "@/lib/assets";
 import { cn } from "@/lib/cn";
@@ -22,10 +23,13 @@ export function OrganizersShowcase() {
 
             <div className="relative flex flex-col items-center text-center">
               <div className="relative mb-6 flex h-32 w-32 items-center justify-center rounded-2xl bg-white p-4 shadow-sm transition-all duration-500 group-hover:scale-110 group-hover:shadow-md md:mb-8 md:h-40 md:w-40 lg:h-48 lg:w-48 lg:p-6">
-                <img
+                <Image
                   src={assetPath(item.logo)}
                   alt={item.name}
-                  className="h-full w-full object-contain"
+                  fill
+                  className="object-contain"
+                  loading="lazy"
+                  unoptimized
                 />
               </div>
 

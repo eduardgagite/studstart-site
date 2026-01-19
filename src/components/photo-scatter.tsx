@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { cn } from "@/lib/cn";
 import { assetPath } from "@/lib/assets";
 import { TrackedLink } from "@/components/tracked-link";
@@ -26,7 +27,7 @@ export function PhotoScatter({ photos, albumUrl }: PhotoScatterProps) {
   // Limit to 6 photos max for the scatter effect to work well
   const displayPhotos = photos.slice(0, 6);
 
-  const renderPhotoContent = (photo: Photo, isMobile: boolean, index: number) => {
+  const renderPhotoContent = (photo: Photo, isMobile: boolean, index: number, isFirst: boolean = false) => {
     const content = isMobile ? (
       <div
         className={cn(
@@ -42,23 +43,29 @@ export function PhotoScatter({ photos, albumUrl }: PhotoScatterProps) {
           <div className="aspect-[4/3] w-full overflow-hidden rounded-xl shadow-inner relative bg-black/20">
              {/* Subtle inner border/ring for depth */}
              <div className="absolute inset-0 ring-1 ring-inset ring-black/10 z-10 rounded-xl pointer-events-none" />
-             <img
+             <Image
               src={assetPath(photo.src)}
               alt={photo.alt}
-              className="h-full w-full object-cover transition-transform duration-700 ease-out"
-              loading="lazy"
+              fill
+              className="object-cover transition-transform duration-700 ease-out"
+              loading={isFirst ? "eager" : "lazy"}
+              priority={isFirst}
+              unoptimized
             />
           </div>
         </div>
       </div>
     ) : (
       <div className="bg-white p-3 shadow-xl rounded-sm transform transition-transform">
-        <div className="aspect-[4/3] overflow-hidden bg-gray-100">
-          <img
+        <div className="aspect-[4/3] overflow-hidden bg-gray-100 relative">
+          <Image
             src={assetPath(photo.src)}
             alt={photo.alt}
-            className="h-full w-full object-cover"
-            loading="lazy"
+            fill
+            className="object-cover"
+            loading={isFirst ? "eager" : "lazy"}
+            priority={isFirst}
+            unoptimized
           />
         </div>
         <div className="pt-4 pb-2 text-center">
@@ -92,7 +99,7 @@ export function PhotoScatter({ photos, albumUrl }: PhotoScatterProps) {
             key={photo.id}
             className="flex-none w-[80vw] max-w-[320px] snap-center first:pl-2 last:pr-6"
           >
-            {renderPhotoContent(photo, true, index)}
+            {renderPhotoContent(photo, true, index, index === 0)}
           </div>
         ))}
       </div>
@@ -107,7 +114,7 @@ export function PhotoScatter({ photos, albumUrl }: PhotoScatterProps) {
               scatterStyles[index % scatterStyles.length]
             )}
           >
-            {renderPhotoContent(photo, false, index)}
+            {renderPhotoContent(photo, false, index, index === 0)}
           </div>
         ))}
       </div>
