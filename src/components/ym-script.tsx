@@ -1,4 +1,27 @@
+"use client";
+
+import { useEffect, useRef } from "react";
 import Script from "next/script";
+import { usePathname, useSearchParams } from "next/navigation";
+import { trackPageView } from "@/lib/ym";
+
+function YandexMetrikaTracker() {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const query = searchParams?.toString();
+  const hasTrackedInitial = useRef(false);
+
+  useEffect(() => {
+    if (!hasTrackedInitial.current) {
+      hasTrackedInitial.current = true;
+      return;
+    }
+    const url = query ? `${pathname}?${query}` : pathname;
+    trackPageView(url);
+  }, [pathname, query]);
+
+  return null;
+}
 
 export function YandexMetrika() {
   const ymId = process.env.NEXT_PUBLIC_YM_ID;
@@ -19,10 +42,13 @@ export function YandexMetrika() {
             })(window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
 
             ym(${ymId}, "init", {
-              clickmap:true,
-              trackLinks:true,
-              accurateTrackBounce:true,
-              webvisor:true
+              clickmap: true,
+              trackLinks: true,
+              accurateTrackBounce: true,
+              webvisor: true,
+              trackHash: true,
+              ssr: true,
+              ecommerce: "dataLayer"
             });
           `,
         }}
@@ -36,6 +62,7 @@ export function YandexMetrika() {
           />
         </div>
       </noscript>
+      <YandexMetrikaTracker />
     </>
   );
 }
