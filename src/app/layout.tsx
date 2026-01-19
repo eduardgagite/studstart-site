@@ -7,6 +7,7 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { CookieBanner } from "@/components/cookie-banner";
 import { YandexMetrika } from "@/components/ym-script";
+import { Suspense } from "react";
 
 const fontSans = Manrope({
   subsets: ["latin", "cyrillic"],
@@ -76,7 +77,9 @@ export default function RootLayout({
           </main>
           <SiteFooter />
           <CookieBanner />
-          <YandexMetrika />
+          <Suspense fallback={null}>
+            <YandexMetrika />
+          </Suspense>
         </ThemeProvider>
       </body>
     </html>
