@@ -170,6 +170,20 @@ export function RegistrationForm() {
     setLoading(true);
     setError(null);
 
+    const webhookUrl = process.env.NEXT_PUBLIC_N8N_WEBHOOK_URL;
+    if (!webhookUrl) {
+      setLoading(false);
+      setError("Отправка заявок недоступна. Обратитесь к тех. администратору.");
+      return;
+    }
+
+    // Check honeypot
+    if (honeypot && honeypot.trim().length > 0) {
+      setLoading(false);
+      setError("Некорректные данные.");
+      return;
+    }
+
     const submissionHash = createSubmissionHash(formState);
     const now = Date.now();
     const lastSubmission = submissionRef.current;
@@ -209,29 +223,29 @@ export function RegistrationForm() {
       utm_content: params.get("utm_content") || undefined,
     };
 
-    const payload = {
-      ...buildN8nPayload(formState, metadata),
-      honeypot,
-      requestId: activeRequestId,
-      submissionHash,
-    };
+    const n8nPayload = buildN8nPayload(formState, metadata);
+    if (activeRequestId) {
+      (n8nPayload as any).request_id = activeRequestId;
+    }
+    if (submissionHash) {
+      (n8nPayload as any).submission_hash = submissionHash;
+    }
 
     const controller = new AbortController();
     const timeoutId = window.setTimeout(() => controller.abort(), 12000);
 
     try {
-      const response = await fetch("/api/registration", {
+      const response = await fetch(webhookUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(n8nPayload),
         signal: controller.signal,
       });
 
       if (!response.ok) {
-        const data = await response.json().catch(() => null);
-        throw new Error(data?.error || "Не удалось отправить заявку");
+        throw new Error("Не удалось отправить заявку. Попробуйте позже.");
       }
 
       const successSubmission: StoredSubmission = {
