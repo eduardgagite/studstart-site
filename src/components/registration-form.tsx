@@ -3,8 +3,8 @@
 import { useMemo, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { registrationFields, stepTitles } from "@/data/registration";
-import { buildN8nPayload, getN8nWebhookUrl } from "@/lib/n8n";
-import { isRegistrationClosed } from "@/lib/registration";
+import { buildN8nPayload } from "@/lib/n8n";
+import { isRegistrationClosed, formatPhoneNumber, formatTelegram } from "@/lib/registration";
 import { Button } from "@/components/ui/button";
 import { reachGoal } from "@/lib/ym";
 import { organizationContacts } from "@/data/contacts";
@@ -34,6 +34,7 @@ export function RegistrationForm() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [started, setStarted] = useState(false);
+  const [honeypot, setHoneypot] = useState("");
 
   // Check for registration closed client-side to match server time if needed, 
   // but usually safe to do in effect or initial state.
@@ -85,13 +86,6 @@ export function RegistrationForm() {
     setLoading(true);
     setError(null);
 
-    const url = getN8nWebhookUrl();
-    if (!url) {
-      setError("Webhook не настроен. Свяжитесь с организаторами.");
-      setLoading(false);
-      return;
-    }
-
     const params = new URLSearchParams(window.location.search);
     const metadata = {
       timestamp: new Date().toISOString(),
@@ -105,19 +99,27 @@ export function RegistrationForm() {
       utm_content: params.get("utm_content") || undefined,
     };
 
-    const payload = buildN8nPayload(formState, metadata);
+    const payload = {
+      ...buildN8nPayload(formState, metadata),
+      honeypot,
+    };
+
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(() => controller.abort(), 12000);
 
     try {
-      const response = await fetch(url, {
+      const response = await fetch("/api/registration", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(payload),
+        signal: controller.signal,
       });
 
       if (!response.ok) {
-        throw new Error("Не удалось отправить заявку");
+        const data = await response.json().catch(() => null);
+        throw new Error(data?.error || "Не удалось отправить заявку");
       }
 
       reachGoal("form_success");
@@ -127,12 +129,24 @@ export function RegistrationForm() {
         submitError instanceof Error ? submitError.message : "Ошибка отправки"
       );
     } finally {
+      window.clearTimeout(timeoutId);
       setLoading(false);
     }
   };
 
   const handleInputChange = (id: string, value: string) => {
-    setFormState((prev) => ({ ...prev, [id]: value }));
+    let formattedValue = value;
+
+    if (id === "phone") {
+      formattedValue = formatPhoneNumber(value);
+    } else if (id === "telegram") {
+      // For telegram we might want to be less aggressive during typing to allow editing,
+      // but let's try strict formatting first as requested.
+      // To prevent preventing deletion, only format if length > 0
+      formattedValue = formatTelegram(value);
+    }
+
+    setFormState((prev) => ({ ...prev, [id]: formattedValue }));
     if (!started) {
       reachGoal("form_start");
       setStarted(true);
@@ -201,6 +215,18 @@ export function RegistrationForm() {
       </div>
 
       <div className="section-shell section-glow mx-auto max-w-5xl">
+        <div className="sr-only" aria-hidden="true">
+          <label htmlFor="company">Company</label>
+          <input
+            id="company"
+            name="company"
+            type="text"
+            tabIndex={-1}
+            autoComplete="off"
+            value={honeypot}
+            onChange={(event) => setHoneypot(event.target.value)}
+          />
+        </div>
         {!isConfirmationStep ? (
           <div className="space-y-8">
             <h2 className="text-2xl font-bold md:text-3xl">
