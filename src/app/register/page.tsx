@@ -30,7 +30,7 @@ export default function RegisterPage() {
           </header>
 
           <div className="animate-fade-up" style={{ animationDelay: "200ms" }}>
-            {process.env.N8N_WEBHOOK_URL ? (
+            {process.env.NEXT_PUBLIC_N8N_WEBHOOK_URL ? (
               <RegistrationForm />
             ) : (
               <div className="mx-auto max-w-2xl text-center rounded-2xl border border-red-500/20 bg-red-500/10 p-8 backdrop-blur-sm">
