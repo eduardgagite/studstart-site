@@ -16,7 +16,7 @@ export default function Home() {
       <HomeScrollTracker />
 
       <section 
-        className="section-panel panel-sky hero-mountains pt-12 pb-16 md:pt-16 md:pb-20"
+        className="section-panel panel-sky hero-mountains pt-12 pb-16 md:pt-16 md:pb-20 relative"
         style={{
           '--hero-image': `url(${assetPath("/images/hero-mountains.png")})`,
         } as React.CSSProperties}

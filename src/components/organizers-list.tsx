@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { organizers } from "@/data/organizers";
 import { assetPath } from "@/lib/assets";
 import { cn } from "@/lib/cn";
@@ -13,11 +14,14 @@ export function OrganizersList() {
           className="group relative overflow-hidden rounded-2xl bg-surface-2 transition-all duration-300 hover:-translate-y-1 hover:shadow-card"
         >
           {/* Image Container */}
-          <div className="aspect-[3/4] h-full w-full overflow-hidden">
-            <img
+          <div className="aspect-[3/4] h-full w-full overflow-hidden relative">
+            <Image
               src={assetPath(organizer.photo)}
               alt={organizer.name}
-              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+              fill
+              className="object-cover transition-transform duration-500 group-hover:scale-105"
+              loading="lazy"
+              unoptimized
             />
           </div>
 
