@@ -16,6 +16,9 @@ const OPTIONAL_METADATA_FIELDS: Array<keyof RegistrationMetadata> = [
   "utm_content",
 ];
 
+const RECENT_REQUESTS_TTL_MS = 15 * 60 * 1000;
+const recentRequestIds = new Map<string, number>();
+
 function isNonEmptyString(value: unknown): value is string {
   return typeof value === "string" && value.trim().length > 0;
 }
@@ -53,6 +56,19 @@ function normalizeFields(input: Record<string, unknown>): RegistrationFields {
   return fields;
 }
 
+function normalizeRequestId(input: unknown): string | null {
+  if (!isNonEmptyString(input)) return null;
+  return input.trim();
+}
+
+function pruneRecentRequests(now: number) {
+  for (const [key, timestamp] of recentRequestIds.entries()) {
+    if (now - timestamp > RECENT_REQUESTS_TTL_MS) {
+      recentRequestIds.delete(key);
+    }
+  }
+}
+
 export async function POST(request: Request) {
   const webhookUrl = process.env.N8N_WEBHOOK_URL;
 
@@ -76,6 +92,8 @@ export async function POST(request: Request) {
 
   const payload = body as Record<string, unknown>;
   const honeypot = payload.honeypot;
+  const requestId = normalizeRequestId(payload.requestId);
+  const submissionHash = normalizeRequestId(payload.submissionHash);
 
   if (typeof honeypot === "string" && honeypot.trim().length > 0) {
     return NextResponse.json({ error: "Некорректные данные." }, { status: 400 });
@@ -101,7 +119,19 @@ export async function POST(request: Request) {
     );
   }
 
+  const now = Date.now();
+  pruneRecentRequests(now);
+  if (requestId && recentRequestIds.has(requestId)) {
+    return NextResponse.json({ ok: true, deduplicated: true });
+  }
+
   const n8nPayload = buildN8nPayload(fields, metadata);
+  if (requestId) {
+    n8nPayload.request_id = requestId;
+  }
+  if (submissionHash) {
+    n8nPayload.submission_hash = submissionHash;
+  }
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 12000);
 
@@ -122,6 +152,9 @@ export async function POST(request: Request) {
       );
     }
 
+    if (requestId) {
+      recentRequestIds.set(requestId, now);
+    }
     return NextResponse.json({ ok: true });
   } catch {
     return NextResponse.json(

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { RegistrationForm } from "@/components/registration-form";
 import { PageGoal } from "@/components/page-goal";
-import { FaRocket } from "react-icons/fa";
+import { FaRocket, FaExclamationCircle } from "react-icons/fa";
 
 export const metadata: Metadata = {
   title: "Стать участником | СтудСтарт",
@@ -30,7 +30,21 @@ export default function RegisterPage() {
           </header>
 
           <div className="animate-fade-up" style={{ animationDelay: "200ms" }}>
-            <RegistrationForm />
+            {process.env.N8N_WEBHOOK_URL ? (
+              <RegistrationForm />
+            ) : (
+              <div className="mx-auto max-w-2xl text-center rounded-2xl border border-red-500/20 bg-red-500/10 p-8 backdrop-blur-sm">
+                <div className="mb-4 flex justify-center text-red-400">
+                  <FaExclamationCircle className="h-12 w-12" />
+                </div>
+                <h2 className="text-xl font-bold text-red-400 md:text-2xl mb-2">
+                  Отправка заявок недоступна
+                </h2>
+                <p className="text-muted text-lg">
+                  Обратитесь к тех. администратору
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </section>
