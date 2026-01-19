@@ -83,7 +83,6 @@ export default function RootLayout({
               })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=${ymId}', 'ym');
 
               ym(${ymId}, 'init', {
-                  defer: true,
                   ssr: true,
                   webvisor: true,
                   clickmap: true,
