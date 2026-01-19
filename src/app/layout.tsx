@@ -6,7 +6,6 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { CookieBanner } from "@/components/cookie-banner";
-import { YandexMetrika } from "@/components/ym-script";
 import { YandexMetrikaTracker } from "@/components/ym-tracker";
 import { Suspense } from "react";
 
@@ -68,6 +67,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const ymId = process.env.NEXT_PUBLIC_YM_ID;
+
   return (
     <html lang="ru" suppressHydrationWarning>
       <body className={`${fontSans.variable} ${fontDisplay.variable} relative overflow-x-hidden`}>
@@ -79,9 +80,19 @@ export default function RootLayout({
           <SiteFooter />
           <CookieBanner />
           <Suspense fallback={null}>
-            <YandexMetrika />
             <YandexMetrikaTracker />
           </Suspense>
+          {ymId ? (
+            <noscript>
+              <div>
+                <img
+                  src={`https://mc.yandex.ru/watch/${ymId}`}
+                  style={{ position: "absolute", left: "-9999px" }}
+                  alt=""
+                />
+              </div>
+            </noscript>
+          ) : null}
         </ThemeProvider>
       </body>
     </html>
