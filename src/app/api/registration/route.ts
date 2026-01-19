@@ -58,7 +58,7 @@ export async function POST(request: Request) {
 
   if (!webhookUrl) {
     return NextResponse.json(
-      { error: "Webhook не настроен. Свяжитесь с организаторами." },
+      { error: "Отправка заявок недоступна.\nОбратитесь к тех. администратору." },
       { status: 500 }
     );
   }
