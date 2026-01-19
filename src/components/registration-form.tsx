@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { registrationFields, stepTitles } from "@/data/registration";
 import { buildN8nPayload } from "@/lib/n8n";
@@ -26,6 +26,58 @@ const initialState = registrationFields.reduce<Record<string, string>>(
   {}
 );
 
+const DRAFT_STORAGE_KEY = "studstart_registration_draft_v1";
+const SUBMISSION_STORAGE_KEY = "studstart_registration_submission_v1";
+const SUBMISSION_DEDUPE_WINDOW_MS = 10 * 60 * 1000;
+
+type StoredDraft = {
+  step: number;
+  fields: Record<string, string>;
+};
+
+type StoredSubmission = {
+  requestId: string;
+  hash: string;
+  status: "pending" | "failed" | "success";
+  lastAttemptAt: number;
+};
+
+function createSubmissionHash(fields: Record<string, string>) {
+  const sortedEntries = Object.keys(fields)
+    .sort()
+    .map((key) => [key, fields[key] ?? ""]);
+  return JSON.stringify(sortedEntries);
+}
+
+function safeReadStorage<T>(key: string): T | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = window.localStorage.getItem(key);
+    if (!raw) return null;
+    return JSON.parse(raw) as T;
+  } catch {
+    return null;
+  }
+}
+
+function safeWriteStorage<T>(key: string, value: T) {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    // ignore storage errors
+  }
+}
+
+function safeRemoveStorage(key: string) {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.removeItem(key);
+  } catch {
+    // ignore storage errors
+  }
+}
+
 export function RegistrationForm() {
   const router = useRouter();
   const [step, setStep] = useState(1);
@@ -35,11 +87,35 @@ export function RegistrationForm() {
   const [loading, setLoading] = useState(false);
   const [started, setStarted] = useState(false);
   const [honeypot, setHoneypot] = useState("");
+  const [requestId, setRequestId] = useState<string | null>(null);
+  const submissionRef = useRef<StoredSubmission | null>(null);
+  const hasHydrated = useRef(false);
 
   // Check for registration closed client-side to match server time if needed, 
   // but usually safe to do in effect or initial state.
   useEffect(() => {
     setClosed(isRegistrationClosed());
+    const storedDraft = safeReadStorage<StoredDraft>(DRAFT_STORAGE_KEY);
+    if (storedDraft?.fields) {
+      setFormState((prev) => ({ ...prev, ...storedDraft.fields }));
+      if (storedDraft.step && storedDraft.step > 1) {
+        setStep(storedDraft.step);
+      }
+      const hasAnyValue = Object.values(storedDraft.fields).some((value) =>
+        Boolean(value?.trim())
+      );
+      if (hasAnyValue) {
+        setStarted(true);
+      }
+    }
+
+    const storedSubmission = safeReadStorage<StoredSubmission>(SUBMISSION_STORAGE_KEY);
+    if (storedSubmission) {
+      submissionRef.current = storedSubmission;
+      setRequestId(storedSubmission.requestId);
+    }
+
+    hasHydrated.current = true;
   }, []);
 
   const totalSteps = Math.max(...registrationFields.map((f) => f.step)) + 1; // +1 for confirmation step
@@ -53,6 +129,14 @@ export function RegistrationForm() {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [step]);
+
+  useEffect(() => {
+    if (!hasHydrated.current) return;
+    const trimmedFields = Object.fromEntries(
+      Object.entries(formState).map(([key, value]) => [key, value ?? ""])
+    );
+    safeWriteStorage(DRAFT_STORAGE_KEY, { step, fields: trimmedFields });
+  }, [formState, step]);
 
   const handleNext = () => {
     // Validate current step
@@ -86,6 +170,32 @@ export function RegistrationForm() {
     setLoading(true);
     setError(null);
 
+    const submissionHash = createSubmissionHash(formState);
+    const now = Date.now();
+    const lastSubmission = submissionRef.current;
+    if (
+      lastSubmission &&
+      lastSubmission.status === "success" &&
+      lastSubmission.hash === submissionHash &&
+      now - lastSubmission.lastAttemptAt < SUBMISSION_DEDUPE_WINDOW_MS
+    ) {
+      setLoading(false);
+      setError("Похоже, эта заявка уже отправлена. Проверьте почту или напишите нам.");
+      return;
+    }
+
+    const activeRequestId = requestId ?? crypto.randomUUID();
+    setRequestId(activeRequestId);
+
+    const pendingSubmission: StoredSubmission = {
+      requestId: activeRequestId,
+      hash: submissionHash,
+      status: "pending",
+      lastAttemptAt: now,
+    };
+    submissionRef.current = pendingSubmission;
+    safeWriteStorage(SUBMISSION_STORAGE_KEY, pendingSubmission);
+
     const params = new URLSearchParams(window.location.search);
     const metadata = {
       timestamp: new Date().toISOString(),
@@ -102,6 +212,8 @@ export function RegistrationForm() {
     const payload = {
       ...buildN8nPayload(formState, metadata),
       honeypot,
+      requestId: activeRequestId,
+      submissionHash,
     };
 
     const controller = new AbortController();
@@ -122,9 +234,27 @@ export function RegistrationForm() {
         throw new Error(data?.error || "Не удалось отправить заявку");
       }
 
+      const successSubmission: StoredSubmission = {
+        requestId: activeRequestId,
+        hash: submissionHash,
+        status: "success",
+        lastAttemptAt: Date.now(),
+      };
+      submissionRef.current = successSubmission;
+      safeWriteStorage(SUBMISSION_STORAGE_KEY, successSubmission);
+      safeRemoveStorage(DRAFT_STORAGE_KEY);
       reachGoal("form_success");
       router.push("/thanks");
     } catch (submitError) {
+      if (submissionRef.current) {
+        const failedSubmission: StoredSubmission = {
+          ...submissionRef.current,
+          status: "failed",
+          lastAttemptAt: Date.now(),
+        };
+        submissionRef.current = failedSubmission;
+        safeWriteStorage(SUBMISSION_STORAGE_KEY, failedSubmission);
+      }
       setError(
         submitError instanceof Error ? submitError.message : "Ошибка отправки"
       );
