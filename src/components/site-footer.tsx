@@ -57,7 +57,7 @@ export function SiteFooter() {
                 </p>
               </div>
               
-              <div className="flex items-center gap-2 text-sm text-muted/80">
+            <div className="flex items-center gap-2 text-sm text-muted/80">
                 <MapPinIcon className="text-primary/70" />
                 <span>{siteConfig.location}</span>
               </div>
@@ -130,15 +130,24 @@ export function SiteFooter() {
               </Link>
             </div>
             
-            <button
-              onClick={scrollToTop}
-              className="group flex items-center gap-3 rounded-full border border-border/60 bg-background/50 py-1.5 pl-4 pr-1.5 text-xs font-medium text-muted transition-all hover:border-primary/50 hover:bg-primary/5 hover:text-primary"
+            <a
+              href="https://alania-go.ru"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group flex items-center gap-3 rounded-full border border-border/40 bg-background/50 pl-4 pr-2 py-1.5 transition-all duration-300 hover:border-primary/50 hover:bg-primary/5 hover:shadow-lg hover:shadow-primary/10 hover:-translate-y-0.5"
             >
-              <span>Наверх</span>
-              <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10 text-primary transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:bg-primary group-hover:text-white">
-                <ArrowUpIcon className="h-3 w-3" />
+              <span className="text-sm font-semibold text-foreground/90 transition-colors group-hover:text-primary">
+                Сделано командой
+              </span>
+              <div className="relative h-8 w-8 transition-transform duration-300 group-hover:scale-110">
+                <Image
+                  src={assetPath("/images/logo-alaniago.png")}
+                  alt="AlaniaGO"
+                  fill
+                  className="object-contain"
+                />
               </div>
-            </button>
+            </a>
           </div>
         </div>
       </div>
