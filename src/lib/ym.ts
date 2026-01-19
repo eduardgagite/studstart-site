@@ -29,14 +29,32 @@ export type MetrikaGoal =
 
 const ymId = process.env.NEXT_PUBLIC_YM_ID;
 
+type YmAction = "init" | "hit" | "reachGoal" | "params";
+
+function getBaseParams() {
+  return {
+    path: `${window.location.pathname}${window.location.search}${window.location.hash}`,
+    title: document.title,
+    referrer: document.referrer || undefined,
+  };
+}
+
 export function reachGoal(goal: MetrikaGoal, params?: Record<string, unknown>) {
   if (typeof window === "undefined" || !ymId) return;
   if (typeof window.ym !== "function") return;
-  window.ym(ymId, "reachGoal", goal, params);
+  const payload = params ? { ...getBaseParams(), ...params } : getBaseParams();
+  window.ym(ymId, "reachGoal", goal, payload);
+}
+
+export function trackPageView(url: string, params?: Record<string, unknown>) {
+  if (typeof window === "undefined" || !ymId) return;
+  if (typeof window.ym !== "function") return;
+  const payload = params ? { ...getBaseParams(), ...params } : getBaseParams();
+  window.ym(ymId, "hit", url, payload);
 }
 
 declare global {
   interface Window {
-    ym?: (id: string, action: string, goal: string, params?: Record<string, unknown>) => void;
+    ym?: (id: string, action: YmAction, ...args: unknown[]) => void;
   }
 }
