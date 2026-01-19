@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Manrope, Unbounded } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { siteConfig } from "@/config/site";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -9,14 +9,116 @@ import { CookieBanner } from "@/components/cookie-banner";
 import { YandexMetrikaTracker } from "@/components/ym-tracker";
 import { Suspense } from "react";
 
-const fontSans = Manrope({
-  subsets: ["latin", "cyrillic"],
+const fontSans = localFont({
+  src: [
+    {
+      path: "../../public/fonts/AtypDisplay-Thin.ttf",
+      weight: "100",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/AtypDisplay-ThinItalic.ttf",
+      weight: "100",
+      style: "italic",
+    },
+    {
+      path: "../../public/fonts/AtypDisplay-Light.ttf",
+      weight: "300",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/AtypDisplay-LightItalic.ttf",
+      weight: "300",
+      style: "italic",
+    },
+    {
+      path: "../../public/fonts/AtypDisplay-Regular.ttf",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/AtypDisplay-Italic.ttf",
+      weight: "400",
+      style: "italic",
+    },
+    {
+      path: "../../public/fonts/AtypDisplay-Medium.ttf",
+      weight: "500",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/AtypDisplay-MediumItalic.ttf",
+      weight: "500",
+      style: "italic",
+    },
+    {
+      path: "../../public/fonts/AtypDisplay-Semibold.ttf",
+      weight: "600",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/AtypDisplay-SemiboldItalic.ttf",
+      weight: "600",
+      style: "italic",
+    },
+  ],
   variable: "--font-sans",
   display: "swap",
 });
 
-const fontDisplay = Unbounded({
-  subsets: ["latin", "cyrillic"],
+const fontDisplay = localFont({
+  src: [
+    {
+      path: "../../public/fonts/AtypDisplay-Thin.ttf",
+      weight: "100",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/AtypDisplay-ThinItalic.ttf",
+      weight: "100",
+      style: "italic",
+    },
+    {
+      path: "../../public/fonts/AtypDisplay-Light.ttf",
+      weight: "300",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/AtypDisplay-LightItalic.ttf",
+      weight: "300",
+      style: "italic",
+    },
+    {
+      path: "../../public/fonts/AtypDisplay-Regular.ttf",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/AtypDisplay-Italic.ttf",
+      weight: "400",
+      style: "italic",
+    },
+    {
+      path: "../../public/fonts/AtypDisplay-Medium.ttf",
+      weight: "500",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/AtypDisplay-MediumItalic.ttf",
+      weight: "500",
+      style: "italic",
+    },
+    {
+      path: "../../public/fonts/AtypDisplay-Semibold.ttf",
+      weight: "600",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/AtypDisplay-SemiboldItalic.ttf",
+      weight: "600",
+      style: "italic",
+    },
+  ],
   variable: "--font-display",
   display: "swap",
 });
