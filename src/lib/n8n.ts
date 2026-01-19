@@ -19,14 +19,6 @@ export type RegistrationPayload = RegistrationFields & {
   metadata: RegistrationMetadata;
 };
 
-export function getN8nWebhookUrl() {
-  return (
-    process.env.N8N_WEBHOOK_URL ||
-    process.env.NEXT_PUBLIC_N8N_WEBHOOK_URL ||
-    ""
-  );
-}
-
 export function buildN8nPayload(
   fields: RegistrationFields,
   metadata: RegistrationMetadata
