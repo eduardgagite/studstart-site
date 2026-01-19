@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import Script from "next/script";
 import { usePathname, useSearchParams } from "next/navigation";
 import { trackPageView } from "@/lib/ym";
@@ -9,13 +9,7 @@ function YandexMetrikaTracker() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const query = searchParams?.toString();
-  const hasTrackedInitial = useRef(false);
-
   useEffect(() => {
-    if (!hasTrackedInitial.current) {
-      hasTrackedInitial.current = true;
-      return;
-    }
     const url = query ? `${pathname}?${query}` : pathname;
     trackPageView(url);
   }, [pathname, query]);
@@ -39,9 +33,10 @@ export function YandexMetrika() {
               m[i].l=1*new Date();
               k=e.createElement(t),a=e.getElementsByTagName(t)[0];
               k.async=1;k.src=r;a.parentNode.insertBefore(k,a)
-            })(window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+            })(window, document, "script", "https://mc.yandex.ru/metrika/tag.js?id=${ymId}", "ym");
 
             ym(${ymId}, "init", {
+              defer: true,
               clickmap: true,
               trackLinks: true,
               accurateTrackBounce: true,
