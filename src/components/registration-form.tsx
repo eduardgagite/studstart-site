@@ -327,7 +327,7 @@ export function RegistrationForm() {
         {error && (
           <div className="mt-6 flex items-center gap-3 rounded-lg border border-red-500/20 bg-red-500/10 p-4 text-red-400">
             <FaExclamationCircle className="h-5 w-5 flex-shrink-0" />
-            <p className="text-sm font-medium">{error}</p>
+            <p className="text-sm font-medium whitespace-pre-line">{error}</p>
           </div>
         )}
 
