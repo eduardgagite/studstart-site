@@ -67,10 +67,35 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const ymId = process.env.NEXT_PUBLIC_YM_ID;
+  const ymId = process.env.NEXT_PUBLIC_YM_ID ?? "106329034";
 
   return (
     <html lang="ru" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function(m,e,t,r,i,k,a){
+                  m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+                  m[i].l=1*new Date();
+                  for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+                  k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+              })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=${ymId}', 'ym');
+
+              ym(${ymId}, 'init', {
+                  defer: true,
+                  ssr: true,
+                  webvisor: true,
+                  clickmap: true,
+                  ecommerce: "dataLayer",
+                  accurateTrackBounce: true,
+                  trackLinks: true,
+                  trackHash: true
+              });
+            `,
+          }}
+        />
+      </head>
       <body className={`${fontSans.variable} ${fontDisplay.variable} relative overflow-x-hidden`}>
         <ThemeProvider>
           <SiteHeader />
@@ -82,17 +107,15 @@ export default function RootLayout({
           <Suspense fallback={null}>
             <YandexMetrikaTracker />
           </Suspense>
-          {ymId ? (
-            <noscript>
-              <div>
-                <img
-                  src={`https://mc.yandex.ru/watch/${ymId}`}
-                  style={{ position: "absolute", left: "-9999px" }}
-                  alt=""
-                />
-              </div>
-            </noscript>
-          ) : null}
+          <noscript>
+            <div>
+              <img
+                src={`https://mc.yandex.ru/watch/${ymId}`}
+                style={{ position: "absolute", left: "-9999px" }}
+                alt=""
+              />
+            </div>
+          </noscript>
         </ThemeProvider>
       </body>
     </html>
