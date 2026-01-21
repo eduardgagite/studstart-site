@@ -1,9 +1,6 @@
-"use client";
-
 import Image from "next/image";
 import { organizers } from "@/data/organizers";
 import { assetPath } from "@/lib/assets";
-import { cn } from "@/lib/cn";
 
 export function OrganizersList() {
   return (
@@ -21,7 +18,7 @@ export function OrganizersList() {
               fill
               className="object-cover transition-transform duration-500 group-hover:scale-105"
               loading="lazy"
-              unoptimized
+              sizes="(max-width: 640px) 90vw, (max-width: 1024px) 45vw, 280px"
             />
           </div>
 

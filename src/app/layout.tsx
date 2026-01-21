@@ -12,54 +12,29 @@ import { Suspense } from "react";
 const fontSans = localFont({
   src: [
     {
-      path: "../../public/fonts/AtypDisplay-Thin.ttf",
-      weight: "100",
-      style: "normal",
-    },
-    {
-      path: "../../public/fonts/AtypDisplay-ThinItalic.ttf",
-      weight: "100",
-      style: "italic",
-    },
-    {
-      path: "../../public/fonts/AtypDisplay-Light.ttf",
-      weight: "300",
-      style: "normal",
-    },
-    {
-      path: "../../public/fonts/AtypDisplay-LightItalic.ttf",
-      weight: "300",
-      style: "italic",
-    },
-    {
-      path: "../../public/fonts/AtypDisplay-Regular.ttf",
+      path: "../../public/fonts/AtypText-Regular.woff2",
       weight: "400",
       style: "normal",
     },
     {
-      path: "../../public/fonts/AtypDisplay-Italic.ttf",
+      path: "../../public/fonts/AtypText-Italic.woff2",
       weight: "400",
       style: "italic",
     },
     {
-      path: "../../public/fonts/AtypDisplay-Medium.ttf",
+      path: "../../public/fonts/AtypText-Medium.woff2",
       weight: "500",
       style: "normal",
     },
     {
-      path: "../../public/fonts/AtypDisplay-MediumItalic.ttf",
-      weight: "500",
-      style: "italic",
-    },
-    {
-      path: "../../public/fonts/AtypDisplay-Semibold.ttf",
+      path: "../../public/fonts/AtypText-Semibold.woff2",
       weight: "600",
       style: "normal",
     },
     {
-      path: "../../public/fonts/AtypDisplay-SemiboldItalic.ttf",
-      weight: "600",
-      style: "italic",
+      path: "../../public/fonts/AtypText-Bold.woff2",
+      weight: "700",
+      style: "normal",
     },
   ],
   variable: "--font-sans",
@@ -69,54 +44,29 @@ const fontSans = localFont({
 const fontDisplay = localFont({
   src: [
     {
-      path: "../../public/fonts/AtypDisplay-Thin.ttf",
-      weight: "100",
-      style: "normal",
-    },
-    {
-      path: "../../public/fonts/AtypDisplay-ThinItalic.ttf",
-      weight: "100",
-      style: "italic",
-    },
-    {
-      path: "../../public/fonts/AtypDisplay-Light.ttf",
-      weight: "300",
-      style: "normal",
-    },
-    {
-      path: "../../public/fonts/AtypDisplay-LightItalic.ttf",
-      weight: "300",
-      style: "italic",
-    },
-    {
-      path: "../../public/fonts/AtypDisplay-Regular.ttf",
+      path: "../../public/fonts/AtypDisplay-Regular.woff2",
       weight: "400",
       style: "normal",
     },
     {
-      path: "../../public/fonts/AtypDisplay-Italic.ttf",
+      path: "../../public/fonts/AtypDisplay-Italic.woff2",
       weight: "400",
       style: "italic",
     },
     {
-      path: "../../public/fonts/AtypDisplay-Medium.ttf",
+      path: "../../public/fonts/AtypDisplay-Medium.woff2",
       weight: "500",
       style: "normal",
     },
     {
-      path: "../../public/fonts/AtypDisplay-MediumItalic.ttf",
-      weight: "500",
-      style: "italic",
-    },
-    {
-      path: "../../public/fonts/AtypDisplay-Semibold.ttf",
+      path: "../../public/fonts/AtypDisplay-Semibold.woff2",
       weight: "600",
       style: "normal",
     },
     {
-      path: "../../public/fonts/AtypDisplay-SemiboldItalic.ttf",
-      weight: "600",
-      style: "italic",
+      path: "../../public/fonts/AtypDisplay-Bold.woff2",
+      weight: "700",
+      style: "normal",
     },
   ],
   variable: "--font-display",

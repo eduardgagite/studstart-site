@@ -49,7 +49,8 @@ export function SiteFooter() {
                     alt="StudStart Logo"
                     fill
                     className="object-contain object-left"
-                    priority
+                    sizes="(max-width: 768px) 192px, 256px"
+                    loading="lazy"
                   />
                 </div>
                 <p className="max-w-xs text-base text-muted/80 leading-relaxed">
@@ -145,6 +146,8 @@ export function SiteFooter() {
                   alt="AlaniaGO"
                   fill
                   className="object-contain"
+                  sizes="32px"
+                  loading="lazy"
                 />
               </div>
             </a>

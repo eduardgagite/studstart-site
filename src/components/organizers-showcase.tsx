@@ -1,5 +1,3 @@
-"use client";
-
 import Image from "next/image";
 import { organizers } from "@/data/home";
 import { assetPath } from "@/lib/assets";
@@ -56,7 +54,6 @@ export function OrganizersShowcase() {
                     className="object-contain"
                     sizes="(max-width: 768px) 144px, 176px"
                     loading="lazy"
-                    unoptimized
                   />
                 </div>
               </div>
