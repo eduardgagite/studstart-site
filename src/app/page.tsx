@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { TrackedButton } from "@/components/tracked-button";
 import { heroContent, photoGrid, vkAlbumUrl } from "@/data/home";
 import { siteConfig } from "@/config/site";
@@ -17,10 +18,18 @@ export default function Home() {
 
       <section 
         className="section-panel panel-sky hero-mountains pt-12 pb-16 md:pt-16 md:pb-20 relative"
-        style={{
-          '--hero-image': `url(${assetPath("/images/hero-mountains.png")})`,
-        } as React.CSSProperties}
       >
+        <div className="pointer-events-none absolute inset-y-0 left-1/2 z-0 w-screen -translate-x-1/2">
+          <Image
+            src={assetPath("/images/hero-mountains.png")}
+            alt=""
+            fill
+            priority
+            fetchPriority="high"
+            sizes="100vw"
+            className="object-cover opacity-20 dark:opacity-40"
+          />
+        </div>
         <div className="section-inner">
           <div
             className="section-shell hero-section-shell relative overflow-hidden"

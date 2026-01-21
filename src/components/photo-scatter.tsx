@@ -1,7 +1,7 @@
 import Image from "next/image";
+import Link from "next/link";
 import { cn } from "@/lib/cn";
 import { assetPath } from "@/lib/assets";
-import { TrackedLink } from "@/components/tracked-link";
 
 interface Photo {
   id: string;
@@ -50,7 +50,7 @@ export function PhotoScatter({ photos, albumUrl }: PhotoScatterProps) {
               className="object-cover transition-transform duration-700 ease-out"
               loading={isFirst ? "eager" : "lazy"}
               priority={isFirst}
-              unoptimized
+              sizes="(max-width: 768px) 80vw, 320px"
             />
           </div>
         </div>
@@ -65,7 +65,7 @@ export function PhotoScatter({ photos, albumUrl }: PhotoScatterProps) {
             className="object-cover"
             loading={isFirst ? "eager" : "lazy"}
             priority={isFirst}
-            unoptimized
+            sizes="(max-width: 768px) 80vw, (max-width: 1200px) 33vw, 320px"
           />
         </div>
         <div className="pt-4 pb-2 text-center">
@@ -76,14 +76,14 @@ export function PhotoScatter({ photos, albumUrl }: PhotoScatterProps) {
 
     if (albumUrl) {
       return (
-        <TrackedLink
+        <Link
           href={albumUrl}
           target="_blank"
-          goal="open_vk_album_photo"
+          rel="noreferrer"
           className="block h-full w-full"
         >
           {content}
-        </TrackedLink>
+        </Link>
       );
     }
 
