@@ -85,6 +85,22 @@
 }
 
 @layer components {
+  .logo-theme-light {
+    display: block;
+  }
+
+  .dark .logo-theme-light {
+    display: none;
+  }
+
+  .logo-theme-dark {
+    display: none;
+  }
+
+  .dark .logo-theme-dark {
+    display: block;
+  }
+
   .glass-card {
     @apply rounded-md border border-border/70 bg-surface/80 backdrop-blur transition duration-300 ease-out hover:-translate-y-1 hover:border-primary/40;
     box-shadow: var(--shadow-card);

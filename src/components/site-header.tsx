@@ -53,7 +53,7 @@ export function SiteHeader() {
               src={assetPath("/images/logo-horizontal-black.png")}
               alt="StudStart Logo"
               fill
-              className="object-contain dark:hidden"
+              className="object-contain logo-theme-light"
               sizes="(max-width: 768px) 128px, 160px"
               priority
             />
@@ -61,7 +61,7 @@ export function SiteHeader() {
               src={assetPath("/images/logo-horizontal-white.png")}
               alt="StudStart Logo"
               fill
-              className="object-contain hidden dark:block"
+              className="object-contain logo-theme-dark"
               sizes="(max-width: 768px) 128px, 160px"
               priority
             />
