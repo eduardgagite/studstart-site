@@ -14,15 +14,26 @@ export function OrganizersList() {
           className="group relative overflow-hidden rounded-2xl bg-surface-2 transition-all duration-300 hover:-translate-y-1 hover:shadow-card"
         >
           {/* Image Container */}
-          <div className="aspect-[3/4] h-full w-full overflow-hidden relative bg-neutral-100 dark:bg-neutral-800">
-            <Image
-              src={assetPath(SHOW_PHOTOS ? organizer.photo : "/images/organizers/default.jpg")}
-              alt={organizer.name}
-              fill
-              className="object-cover transition-transform duration-500 group-hover:scale-105"
-              loading="lazy"
-              sizes="(max-width: 640px) 90vw, (max-width: 1024px) 45vw, 280px"
-            />
+          <div className="aspect-[3/4] h-full w-full overflow-hidden relative bg-gradient-to-br from-primary/30 via-surface-2 to-accent/30 dark:from-primary/20 dark:via-surface-2 dark:to-accent/20 flex items-center justify-center">
+            {SHOW_PHOTOS ? (
+              <Image
+                src={assetPath(organizer.photo)}
+                alt={organizer.name}
+                fill
+                className="object-cover transition-transform duration-500 group-hover:scale-105"
+                loading="lazy"
+                sizes="(max-width: 640px) 90vw, (max-width: 1024px) 45vw, 280px"
+              />
+            ) : (
+              <div className="relative h-24 w-24 opacity-50 grayscale transition-all duration-500 group-hover:scale-110 group-hover:opacity-80 group-hover:grayscale-0">
+                <Image
+                  src={assetPath("/images/logo-profkom.png")}
+                  alt="Профком"
+                  fill
+                  className="object-contain"
+                />
+              </div>
+            )}
           </div>
 
           {/* Content Overlay */}
