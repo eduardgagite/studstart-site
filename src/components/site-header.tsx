@@ -3,7 +3,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
-import { useTheme } from "next-themes";
 import { navLinks } from "@/data/navigation";
 import { siteConfig } from "@/config/site";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -15,12 +14,6 @@ import { assetPath } from "@/lib/assets";
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
-  const { resolvedTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   useEffect(() => {
     if (open) {
@@ -57,14 +50,18 @@ export function SiteHeader() {
         >
           <div className="relative h-8 w-32 md:h-10 md:w-40">
             <Image
-              src={
-                mounted && resolvedTheme === "dark"
-                  ? assetPath("/images/logo-horizontal-white.png")
-                  : assetPath("/images/logo-horizontal-black.png")
-              }
+              src={assetPath("/images/logo-horizontal-black.png")}
               alt="StudStart Logo"
               fill
-              className="object-contain"
+              className="object-contain dark:hidden"
+              sizes="(max-width: 768px) 128px, 160px"
+              priority
+            />
+            <Image
+              src={assetPath("/images/logo-horizontal-white.png")}
+              alt="StudStart Logo"
+              fill
+              className="object-contain hidden dark:block"
               sizes="(max-width: 768px) 128px, 160px"
               priority
             />
