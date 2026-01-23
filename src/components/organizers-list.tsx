@@ -2,6 +2,9 @@ import Image from "next/image";
 import { organizers } from "@/data/organizers";
 import { assetPath } from "@/lib/assets";
 
+// Toggle this to true when photos are ready
+const SHOW_PHOTOS = false;
+
 export function OrganizersList() {
   return (
     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
@@ -11,9 +14,9 @@ export function OrganizersList() {
           className="group relative overflow-hidden rounded-2xl bg-surface-2 transition-all duration-300 hover:-translate-y-1 hover:shadow-card"
         >
           {/* Image Container */}
-          <div className="aspect-[3/4] h-full w-full overflow-hidden relative">
+          <div className="aspect-[3/4] h-full w-full overflow-hidden relative bg-neutral-100 dark:bg-neutral-800">
             <Image
-              src={assetPath(organizer.photo)}
+              src={assetPath(SHOW_PHOTOS ? organizer.photo : "/images/organizers/default.jpg")}
               alt={organizer.name}
               fill
               className="object-cover transition-transform duration-500 group-hover:scale-105"
