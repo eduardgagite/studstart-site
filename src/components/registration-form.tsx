@@ -87,7 +87,6 @@ export function RegistrationForm() {
   const [loading, setLoading] = useState(false);
   const [started, setStarted] = useState(false);
   const [honeypot, setHoneypot] = useState("");
-  const [requestId, setRequestId] = useState<string | null>(null);
   const submissionRef = useRef<StoredSubmission | null>(null);
   const hasHydrated = useRef(false);
 
@@ -112,7 +111,6 @@ export function RegistrationForm() {
     const storedSubmission = safeReadStorage<StoredSubmission>(SUBMISSION_STORAGE_KEY);
     if (storedSubmission) {
       submissionRef.current = storedSubmission;
-      setRequestId(storedSubmission.requestId);
     }
 
     hasHydrated.current = true;
@@ -198,8 +196,7 @@ export function RegistrationForm() {
       return;
     }
 
-    const activeRequestId = requestId ?? crypto.randomUUID();
-    setRequestId(activeRequestId);
+    const activeRequestId = crypto.randomUUID();
 
     const pendingSubmission: StoredSubmission = {
       requestId: activeRequestId,
