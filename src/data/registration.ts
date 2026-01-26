@@ -115,7 +115,7 @@ export const registrationFields: RegistrationField[] = [
     label: "Как ты предпочитаешь получать инфу?",
     type: "radio",
     required: true,
-    options: ["Телеграм", "Сайт"],
+    options: ["Телеграм", "Сайт", "Без разницы"],
     step: 3,
   },
   {
