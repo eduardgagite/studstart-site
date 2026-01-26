@@ -168,13 +168,6 @@ export function RegistrationForm() {
     setLoading(true);
     setError(null);
 
-    const webhookUrl = process.env.NEXT_PUBLIC_N8N_WEBHOOK_URL;
-    if (!webhookUrl) {
-      setLoading(false);
-      setError("Отправка заявок недоступна. Обратитесь к тех. администратору.");
-      return;
-    }
-
     // Check honeypot
     if (honeypot && honeypot.trim().length > 0) {
       setLoading(false);
@@ -221,18 +214,15 @@ export function RegistrationForm() {
     };
 
     const n8nPayload = buildN8nPayload(formState, metadata);
-    if (activeRequestId) {
-      (n8nPayload as any).request_id = activeRequestId;
-    }
-    if (submissionHash) {
-      (n8nPayload as any).submission_hash = submissionHash;
-    }
+    (n8nPayload as any).honeypot = honeypot;
+    (n8nPayload as any).requestId = activeRequestId;
+    (n8nPayload as any).submissionHash = submissionHash;
 
     const controller = new AbortController();
     const timeoutId = window.setTimeout(() => controller.abort(), 12000);
 
     try {
-      const response = await fetch(webhookUrl, {
+      const response = await fetch("/api/registration", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -241,8 +231,11 @@ export function RegistrationForm() {
         signal: controller.signal,
       });
 
+      const responseBody = await response.json().catch(() => null);
       if (!response.ok) {
-        throw new Error("Не удалось отправить заявку. Попробуйте позже.");
+        throw new Error(
+          responseBody?.error || "Не удалось отправить заявку. Попробуйте позже."
+        );
       }
 
       const successSubmission: StoredSubmission = {
@@ -266,8 +259,12 @@ export function RegistrationForm() {
         submissionRef.current = failedSubmission;
         safeWriteStorage(SUBMISSION_STORAGE_KEY, failedSubmission);
       }
+      const message =
+        submitError instanceof Error ? submitError.message : "Ошибка отправки";
       setError(
-        submitError instanceof Error ? submitError.message : "Ошибка отправки"
+        message === "Load failed" || message === "Failed to fetch"
+          ? "Не удалось отправить заявку. Попробуйте ещё раз."
+          : message
       );
     } finally {
       window.clearTimeout(timeoutId);
