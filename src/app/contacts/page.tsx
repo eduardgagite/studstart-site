@@ -14,16 +14,9 @@ export const metadata: Metadata = {
 export default function ContactsPage() {
   return (
     <div className="space-y-20 pb-20 pt-10">
-      {/* Background Decor */}
-      <div className="fixed inset-0 -z-50 pointer-events-none overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-indigo-50 via-white to-blue-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950" />
-          <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-primary/20 blur-[100px] rounded-full mix-blend-multiply dark:mix-blend-screen dark:opacity-20 animate-float" />
-          <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-accent/20 blur-[100px] rounded-full mix-blend-multiply dark:mix-blend-screen dark:opacity-20 animate-float" style={{ animationDelay: "2s" }} />
-      </div>
-
       {/* Intro / Contact Info Section */}
       <section className="animate-fade-up">
-        <div className="section-shell relative overflow-hidden border-none bg-white/60 dark:bg-slate-900/60 p-8 md:p-12 backdrop-blur-xl shadow-xl ring-1 ring-black/5 dark:ring-white/10">
+        <div className="section-shell relative overflow-hidden bg-gradient-to-br from-surface-1 to-surface-2 p-8 md:p-12">
           {/* Background decoration */}
           <div className="absolute -right-20 -top-20 h-96 w-96 rounded-full bg-primary/10 blur-[100px]" />
           <div className="absolute -bottom-20 -left-20 h-96 w-96 rounded-full bg-accent/10 blur-[100px]" />
