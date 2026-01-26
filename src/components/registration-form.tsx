@@ -213,6 +213,13 @@ export function RegistrationForm() {
       utm_content: params.get("utm_content") || undefined,
     };
 
+    const webhookUrl = process.env.NEXT_PUBLIC_N8N_WEBHOOK_URL;
+    if (!webhookUrl) {
+      setLoading(false);
+      setError("Отправка заявок недоступна. Обратитесь к тех. администратору.");
+      return;
+    }
+
     const n8nPayload = buildN8nPayload(formState, metadata);
     (n8nPayload as any).honeypot = honeypot;
     (n8nPayload as any).requestId = activeRequestId;
@@ -222,7 +229,7 @@ export function RegistrationForm() {
     const timeoutId = window.setTimeout(() => controller.abort(), 12000);
 
     try {
-      const response = await fetch("/api/registration", {
+      const response = await fetch(webhookUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -263,7 +270,7 @@ export function RegistrationForm() {
         submitError instanceof Error ? submitError.message : "Ошибка отправки";
       setError(
         message === "Load failed" || message === "Failed to fetch"
-          ? "Не удалось отправить заявку. Попробуйте ещё раз."
+          ? "Не удалось отправить заявку. Возможны проблемы с сетью. Попробуйте ещё раз."
           : message
       );
     } finally {
