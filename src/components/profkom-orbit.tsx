@@ -86,6 +86,65 @@ export function ProfkomOrbit({ members }: ProfkomOrbitProps) {
     });
   }, [geometry.outerRadius, outerOrbitMembers.length]);
 
+  if (geometry.compact) {
+    return (
+      <div
+        ref={containerRef}
+        className="relative w-full overflow-hidden rounded-3xl bg-surface-1/60 border border-border/60 shadow-inner backdrop-blur-sm p-6"
+      >
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/10 via-background/50 to-background pointer-events-none" />
+
+        <div className="relative z-10 flex flex-col items-center gap-6">
+          <div className="flex flex-col items-center">
+            <div className="relative h-28 w-28 rounded-full border-4 border-primary/50 shadow-[0_0_40px_rgba(var(--primary),0.28)] bg-surface-2 overflow-hidden">
+              {leader?.photo ? (
+                <Image
+                  src={assetPath(leader.photo)}
+                  alt={leader.name}
+                  fill
+                  className="object-cover"
+                />
+              ) : (
+                <div className="w-full h-full bg-primary/20" />
+              )}
+            </div>
+            <div className="mt-4 text-center px-4 py-2 rounded-xl bg-surface-1/80 backdrop-blur-md border border-white/10 shadow-lg">
+              <h3 className="text-lg font-bold text-foreground">{leader?.name}</h3>
+              <p className="text-sm text-primary font-medium">{leader?.role}</p>
+            </div>
+          </div>
+
+          <div className="w-full">
+            <p className="text-center text-xs uppercase tracking-[0.2em] text-muted mb-4">
+              Команда профкома
+            </p>
+            <div className="grid grid-cols-3 gap-4">
+              {others.map((member) => (
+                <div key={member.id} className="flex flex-col items-center text-center">
+                  <div className="relative h-14 w-14 rounded-full border-2 border-surface-1 bg-surface-2 overflow-hidden shadow-sm">
+                    {member.photo ? (
+                      <Image
+                        src={assetPath(member.photo)}
+                        alt={member.name}
+                        fill
+                        className="object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-muted/20" />
+                    )}
+                  </div>
+                  <span className="mt-2 text-xs font-medium text-foreground/90 line-clamp-2">
+                    {member.name}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div
       ref={containerRef}
