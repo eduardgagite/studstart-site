@@ -127,7 +127,7 @@ export const organizerGroups: OrganizerGroup[] = [
       {
         id: "prostak-maria",
         name: "Простак Мария",
-        role: "Вечерняя программа",
+        role: "Организатор вечерней программы",
         photo: "/images/organizers/prof/maria-prostak.jpg",
       },
       {
