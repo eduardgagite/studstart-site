@@ -8,6 +8,7 @@ import { RouteSection } from "@/components/route-section";
 import { cn } from "@/lib/cn";
 
 import { OrganizersShowcase } from "@/components/organizers-showcase";
+import { RectorBlock } from "@/components/rector-block";
 import { PowerPoints } from "@/components/power-points";
 import { PhotoScatter } from "@/components/photo-scatter";
 
@@ -82,6 +83,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <RectorBlock />
 
       <PowerPoints />
 
