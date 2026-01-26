@@ -121,7 +121,7 @@ export const organizerGroups: OrganizerGroup[] = [
       {
         id: "doev-zaurbek",
         name: "Доев Заурбек",
-        role: "Вечерняя программа",
+        role: "Организатор вечерней программы",
         photo: "/images/organizers/prof/zaurber-doev.jpg",
       },
       {
@@ -133,13 +133,13 @@ export const organizerGroups: OrganizerGroup[] = [
       {
         id: "yudina-sofia",
         name: "Юдина София",
-        role: "Вечерняя программа",
+        role: "Организатор вечерней программы",
         photo: "/images/organizers/prof/sofia-yudina.jpg",
       },
       {
         id: "kozaeva-diana",
         name: "Козаева Диана",
-        role: "Вечерняя программа",
+        role: "Организатор вечерней программы",
         photo: "/images/organizers/prof/diana-kozaeva.jpg",
       },
       {
