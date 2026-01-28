@@ -268,10 +268,15 @@ export function RegistrationForm() {
       }
       let errorMessage = "Ошибка отправки";
       if (submitError instanceof Error) {
-        if (/load failed/i.test(submitError.message)) {
-          errorMessage = "Не удалось отправить заявку. Повторите позже — проблемы с сетью.";
+        if (/failed to fetch/i.test(submitError.message)) {
+          errorMessage =
+            "Не удалось отправить заявку. Проверьте интернет или попробуйте позже — возможны временные проблемы с сетью.";
+        } else if (/load failed/i.test(submitError.message)) {
+          errorMessage =
+            "Не удалось отправить заявку. Проверьте интернет или попробуйте позже — возможны временные проблемы с сетью.";
         } else if (submitError.name === "AbortError") {
-          errorMessage = "Не удалось отправить заявку. Повторите позже — проблемы с сетью.";
+          errorMessage =
+            "Не удалось отправить заявку. Проверьте интернет или попробуйте позже — возможны временные проблемы с сетью.";
         } else {
           errorMessage = submitError.message;
         }
