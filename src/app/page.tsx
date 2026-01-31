@@ -22,11 +22,9 @@ export default function Home() {
       >
         <div className="pointer-events-none absolute inset-y-0 left-1/2 z-0 w-screen -translate-x-1/2">
           <Image
-            src={assetPath("/images/hero-mountains.png")}
+            src={assetPath("/images/hero-mountains.webp")}
             alt=""
             fill
-            priority
-            fetchPriority="high"
             sizes="100vw"
             className="object-cover opacity-20 dark:opacity-40"
           />
