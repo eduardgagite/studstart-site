@@ -167,8 +167,10 @@ export function ParticipantsBoard() {
     const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
 
     try {
-      const webhookUrl =
-        process.env.NEXT_PUBLIC_N8N_PARTICIPANTS_WEBHOOK_URL ?? "/api/participants";
+      const webhookUrl = process.env.NEXT_PUBLIC_N8N_PARTICIPANTS_WEBHOOK_URL;
+      if (!webhookUrl) {
+        throw new Error("Не настроен адрес загрузки участников.");
+      }
 
       const response = await fetch(webhookUrl, {
         cache: "no-store",
