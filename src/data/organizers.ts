@@ -55,13 +55,13 @@ export const organizerGroups: OrganizerGroup[] = [
       {
         id: "farnieva-elizaveta",
         name: "Фарниева Елизавета",
-        role: "Директор форума",
+        role: "Генеральный директор форума",
         photo: "/images/organizers/prof/elizaveta-farnieva.jpg",
       },
       {
         id: "mamaeva-sabina",
         name: "Мамаева Сабина",
-        role: "Зам. директора форума",
+        role: "Исполнительный директор форума",
         photo: "/images/organizers/prof/sabina-mamaeva.jpg",
       },
       {
