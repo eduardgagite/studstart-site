@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
-import { FaCompass } from "react-icons/fa";
-// import { programDays } from "@/data/program";
-// import { TrackedButton } from "@/components/tracked-button";
-// import { assetPath } from "@/lib/assets";
-// import { ProgramTimeline } from "@/components/program-timeline";
+import { programDays } from "@/data/program";
+import { ProgramTimeline } from "@/components/program-timeline";
 
 export const metadata: Metadata = {
   title: "Программа",
@@ -34,23 +31,8 @@ export default function ProgramPage() {
         </TrackedButton> */}
       </section>
 
-      {/* Заглушка программы */}
       <section className="section-shell">
-        <div className="relative overflow-hidden rounded-3xl border border-border/50 bg-gradient-to-tr from-sky-500/10 via-background to-indigo-500/10 p-12 md:py-24 text-center shadow-sm">
-          <div className="relative z-10 max-w-lg mx-auto flex flex-col items-center gap-6">
-            <div className="h-20 w-20 rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center text-primary shadow-sm ring-1 ring-primary/20">
-                <FaCompass className="w-10 h-10" />
-            </div>
-            
-            <div className="space-y-3">
-                <h3 className="text-2xl font-semibold tracking-tight text-foreground">Программа обновляется</h3>
-                <p className="text-muted-foreground leading-relaxed text-lg">
-                    Финальная программа формируется. <br className="hidden sm:inline" />
-                    Опубликуем здесь сразу после подтверждения.
-                </p>
-            </div>
-          </div>
-        </div>
+        <ProgramTimeline days={programDays} />
       </section>
     </div>
   );
