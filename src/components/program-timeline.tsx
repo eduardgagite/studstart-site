@@ -87,6 +87,9 @@ export function ProgramTimeline({ days }: ProgramTimelineProps) {
             <p className="text-muted mt-2 text-lg">
               План действий на {days[activeDayIndex].date}
             </p>
+            <div className="mt-4 inline-flex items-center rounded-full border border-border/50 bg-surface/40 px-3 py-1 text-xs text-muted">
+              Программа может дополняться и изменяться в процессе
+            </div>
           </div>
 
           {/* Список событий */}
