@@ -3,29 +3,7 @@
 import { useState } from "react";
 import { cn } from "@/lib/cn";
 import { ProgramDay } from "@/data/program";
-import { 
-  FaFlag, 
-  FaUsers, 
-  FaLightbulb, 
-  FaStar, 
-  FaMountain, 
-  FaMapMarkerAlt,
-  FaCampground,
-  FaMusic
-} from "react-icons/fa";
-
-// Хелпер для выбора иконки по названию события
-const getEventIcon = (title: string) => {
-  const lowerTitle = title.toLowerCase();
-  if (lowerTitle.includes("заезд") || lowerTitle.includes("отъезд") || lowerTitle.includes("сборы")) return <FaCampground />;
-  if (lowerTitle.includes("старт") || lowerTitle.includes("финал") || lowerTitle.includes("итоги") || lowerTitle.includes("открытие")) return <FaFlag />;
-  if (lowerTitle.includes("команд") || lowerTitle.includes("знакомств")) return <FaUsers />;
-  if (lowerTitle.includes("лекци") || lowerTitle.includes("тренинг") || lowerTitle.includes("практикум") || lowerTitle.includes("наставничество")) return <FaLightbulb />;
-  if (lowerTitle.includes("вечер") || lowerTitle.includes("ночной")) return <FaMusic />;
-  if (lowerTitle.includes("квест")) return <FaMapMarkerAlt />;
-  if (lowerTitle.includes("свободное")) return <FaMountain />;
-  return <FaStar />; // иконка по умолчанию
-};
+// Иконки убраны по запросу
 
 interface ProgramTimelineProps {
   days: ProgramDay[];
@@ -76,12 +54,6 @@ export function ProgramTimeline({ days }: ProgramTimelineProps) {
                     <span className="text-xl font-bold text-foreground">
                       {day.date}
                     </span>
-                    <span className={cn(
-                      "text-sm transition-colors",
-                      isActive ? "text-foreground/90" : "text-muted/80"
-                    )}>
-                      {day.label}
-                    </span>
                   </div>
                 </button>
               );
@@ -100,7 +72,7 @@ export function ProgramTimeline({ days }: ProgramTimelineProps) {
             className="mb-10 animate-in fade-in slide-in-from-left-4 duration-500 ease-out"
           >
             <h2 className="text-3xl font-bold md:text-4xl text-transparent bg-clip-text bg-gradient-to-r from-foreground to-foreground/70">
-              {days[activeDayIndex].label}
+              {days[activeDayIndex].date}
             </h2>
             <p className="text-muted mt-2 text-lg">
               План действий на {days[activeDayIndex].date}
@@ -112,6 +84,7 @@ export function ProgramTimeline({ days }: ProgramTimelineProps) {
             {days[activeDayIndex].entries.map((entry, idx) => {
               const isFirst = idx === 0;
               const isLast = idx === days[activeDayIndex].entries.length - 1;
+              const hasDescription = Boolean(entry.description);
 
               return (
                 <div 
@@ -136,32 +109,35 @@ export function ProgramTimeline({ days }: ProgramTimelineProps) {
                     </div>
                     
                     <div className="flex-1 min-w-0">
-                      <div className="glass-card p-5 md:p-6 rounded-2xl border border-border/40 hover:border-primary/30 transition-all duration-300 hover:bg-surface/60 hover:shadow-lg hover:-translate-y-1">
-                        <div className="flex flex-col sm:flex-row gap-5 sm:items-start">
+                      <div className="glass-card p-5 md:p-6 rounded-2xl border border-border/40 hover:border-primary/30 transition-all duration-300 hover:bg-surface/60 hover:shadow-lg hover:-translate-y-1 relative overflow-hidden">
+                        <div className="absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
+                        <div
+                          className={cn(
+                            "flex flex-col sm:flex-row gap-5",
+                            hasDescription ? "sm:items-start" : "sm:items-center"
+                          )}
+                        >
                           
-                          {/* Время и Иконка */}
-                          <div className="flex items-center gap-4 sm:w-36 flex-none">
-                            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary border border-primary/20 group-hover:bg-primary group-hover:text-white transition-colors duration-300">
-                              <span className="text-xl">
-                                {getEventIcon(entry.title)}
-                              </span>
-                            </div>
-                            <div className="flex flex-col">
-                              <span className="font-bold text-xl tabular-nums leading-none text-foreground">
+                          {/* Время */}
+                          <div className="sm:w-40 flex-none">
+                            <div className="inline-flex flex-col rounded-xl border border-border/50 bg-gradient-to-br from-surface/80 to-surface/40 px-4 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
+                              <span className="font-bold text-lg tabular-nums leading-none text-foreground">
                                 {entry.time}
-                              </span>
-                              <span className="text-[10px] text-muted uppercase tracking-widest font-bold mt-1">
-                                Время
                               </span>
                             </div>
                           </div>
 
                           {/* Описание */}
                           <div className="flex-1 pt-1 sm:pt-0">
-                            <h4 className="text-xl font-bold leading-tight mb-2 group-hover:text-primary transition-colors">
+                            <h4
+                              className={cn(
+                                "text-xl font-bold leading-tight group-hover:text-primary transition-colors",
+                                hasDescription ? "mb-2" : "mb-0"
+                              )}
+                            >
                               {entry.title}
                             </h4>
-                            {entry.description && (
+                            {hasDescription && (
                               <p className="text-base text-muted leading-relaxed">
                                 {entry.description}
                               </p>
