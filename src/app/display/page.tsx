@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import path from "node:path";
 import { readdirSync } from "node:fs";
 import { assetPath } from "@/lib/assets";
 import { DisplaySlideshow } from "@/components/display-slideshow";
+import { DisplayDvdLogo } from "@/components/display-dvd-logo";
 
 export const metadata: Metadata = {
   title: "Экран проектора",
@@ -44,7 +44,7 @@ export default function DisplayPage() {
 
   return (
     <div
-      className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden bg-[#0b1020]"
+      className="fixed inset-0 z-[9999] overflow-hidden bg-[#0b1020]"
       style={{ margin: 0, padding: 0 }}
     >
       {/* Mountains background */}
@@ -79,23 +79,8 @@ export default function DisplayPage() {
         ))}
       </div>
 
-      {/* Centered logo */}
-      <div className="relative z-10 flex w-full items-center justify-center px-6">
-        <div className="relative flex flex-col items-center justify-center text-center">
-          <div className="absolute -inset-16 -z-10 rounded-full bg-[radial-gradient(circle,rgba(94,177,255,0.5),transparent_65%)] blur-[80px] animate-halo" />
-          <Image
-            src={assetPath("/images/logo-horizontal-white.png")}
-            alt="СтудСтарт"
-            width={900}
-            height={220}
-            className="h-auto w-[74vw] max-w-[980px] object-contain drop-shadow-[0_12px_50px_rgba(0,0,0,0.65)] animate-float"
-            priority
-          />
-          <p className="mt-6 text-[clamp(18px,2.2vw,32px)] font-semibold uppercase tracking-[0.2em] text-white/85">
-            Школа студенческого актива СОГУ 2026
-          </p>
-        </div>
-      </div>
+      {/* DVD-style moving logo */}
+      <DisplayDvdLogo />
     </div>
   );
 }
