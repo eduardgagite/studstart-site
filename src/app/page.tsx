@@ -45,15 +45,15 @@ export default function Home() {
               <p className="text-lg text-muted md:text-xl">{heroContent.subtitle}</p>
               <p className="max-w-xl text-base text-muted">{heroContent.description}</p>
               <div className="flex flex-wrap gap-3 pt-2">
-                <TrackedButton href="/register" variant="primary" goal="cta_register">
+                <TrackedButton href="/program" variant="primary">
                   {heroContent.primaryCta}
                 </TrackedButton>
-                <TrackedButton href="/program" variant="secondary">
+                <TrackedButton href="/contacts" variant="secondary">
                   {heroContent.secondaryCta}
                 </TrackedButton>
               </div>
               <p className="text-xs text-muted pt-2">
-                Приём заявок до 31 января, 23:59 (местное время).
+                Регистрация завершена. Форум идет 8–12 февраля 2026.
               </p>
             </div>
             <div className="glass-card relative flex flex-col gap-6 p-6 md:p-8">
@@ -72,8 +72,8 @@ export default function Home() {
                   <p className="mt-2 text-base text-foreground">Первокурсники СОГУ</p>
                 </div>
                 <div className="rounded-md border border-border/60 bg-background/70 p-4">
-                  <p className="text-xs uppercase tracking-[0.3em] text-muted">Дедлайн</p>
-                  <p className="mt-2 text-base text-foreground">31 января, 23:59</p>
+                  <p className="text-xs uppercase tracking-[0.3em] text-muted">Статус</p>
+                  <p className="mt-2 text-base text-foreground">Форум идет</p>
                 </div>
               </div>
             </div>
@@ -122,15 +122,17 @@ export default function Home() {
 
       <section className="section-panel panel-mountains pt-16 pb-20 md:pt-20 md:pb-24">
         <div className="section-inner space-y-6 text-center">
-          <p className="section-eyebrow">Финальный старт</p>
-          <h2 className="text-3xl font-semibold md:text-4xl">Готов попасть на СтудСтарт?</h2>
+          <p className="section-eyebrow">Форум идет</p>
+          <h2 className="text-3xl font-semibold md:text-4xl">Следи за СтудСтартом</h2>
           <p className="mx-auto max-w-xl text-sm text-muted md:text-base">
-            Заполни заявку, дождись подтверждения и приходи на очное
-            собеседование. Места ограничены.
+            Программа, объявления, фото и связь с командой форума — всё в одном месте.
           </p>
-          <div className="flex justify-center pt-2">
-            <TrackedButton href="/register" variant="primary" goal="cta_register">
-              Стать участником
+          <div className="flex flex-wrap justify-center gap-3 pt-2">
+            <TrackedButton href="/program" variant="primary">
+              Смотреть программу
+            </TrackedButton>
+            <TrackedButton href="/contacts" variant="secondary">
+              Контакты штаба
             </TrackedButton>
           </div>
         </div>

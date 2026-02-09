@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { reachGoal } from "@/lib/ym";
 import { organizationContacts } from "@/data/contacts";
 import { TrackedLink } from "@/components/tracked-link";
+import { TrackedButton } from "@/components/tracked-button";
 import { cn } from "@/lib/cn";
 import { 
   FaExclamationCircle, 
@@ -317,9 +318,18 @@ export function RegistrationForm() {
           Регистрация завершена
         </h2>
         <p className="mt-4 text-lg text-muted">
-          К сожалению, мы уже набрали участников. <br />
-          Следите за новостями, чтобы не пропустить следующие мероприятия!
+          Мы уже набрали участников, форум идет 8–12 февраля 2026. <br />
+          Следите за программой и новостями, чтобы быть в курсе.
         </p>
+
+        <div className="mt-6 flex flex-wrap justify-center gap-3">
+          <TrackedButton href="/program" variant="primary">
+            Смотреть программу
+          </TrackedButton>
+          <TrackedButton href="/contacts" variant="secondary">
+            Контакты штаба
+          </TrackedButton>
+        </div>
         
         <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {organizationContacts.map((org) => (

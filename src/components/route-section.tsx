@@ -6,7 +6,7 @@ import { cn } from "@/lib/cn";
 const steps = [
   {
     title: "Заявка",
-    description: "Оставляешь данные, чтобы мы познакомились.",
+    description: "Участники оставляли данные, чтобы мы познакомились.",
     icon: (className: string) => (
       <svg
         aria-hidden="true"
@@ -25,7 +25,7 @@ const steps = [
   },
   {
     title: "Проверка",
-    description: "Команда форума внимательно смотрит заявки.",
+    description: "Команда форума внимательно посмотрела заявки.",
     icon: (className: string) => (
       <svg
         aria-hidden="true"
@@ -44,7 +44,7 @@ const steps = [
   },
   {
     title: "Собеседование",
-    description: "Короткая встреча, чтобы узнать друг друга ближе.",
+    description: "Прошла короткая встреча, чтобы узнать друг друга ближе.",
     icon: (className: string) => (
       <svg
         aria-hidden="true"
@@ -62,7 +62,7 @@ const steps = [
   },
   {
     title: "Очная встреча",
-    description: "Знакомство с командой и другими участниками форума.",
+    description: "Состоялась очная встреча с командой и участниками форума.",
     icon: (className: string) => (
       <svg
         aria-hidden="true"
@@ -83,7 +83,7 @@ const steps = [
   },
   {
     title: "Форум",
-    description: "Стартовая точка твоей студенческой истории.",
+    description: "Форум идет — стартовая точка студенческой истории.",
     icon: (className: string) => (
       <svg
         aria-hidden="true"
@@ -188,10 +188,10 @@ export function RouteSection() {
     <section id="howto" className="section-panel panel-route">
       <div className="section-inner space-y-10 md:space-y-12">
         <div className="max-w-2xl space-y-3">
-          <p className="section-eyebrow">Путь к СтудСтарту</p>
-          <h2 className="text-4xl font-semibold md:text-5xl">Маршрут участника</h2>
+          <p className="section-eyebrow">Как проходил отбор</p>
+          <h2 className="text-4xl font-semibold md:text-5xl">Маршрут к форуму</h2>
           <p className="text-sm text-muted md:text-base">
-            Путь построен как маршрут: от заявки до старта в горах.
+            Так проходил путь участников: от заявки до форума в горах.
           </p>
         </div>
 

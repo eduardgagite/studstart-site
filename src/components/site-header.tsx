@@ -10,7 +10,6 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { VKIcon, TelegramIcon, InstagramIcon } from "@/components/ui/icons";
 import { cn } from "@/lib/cn";
-import { reachGoal } from "@/lib/ym";
 import { assetPath } from "@/lib/assets";
 
 export function SiteHeader() {
@@ -98,12 +97,11 @@ function SiteHeaderContent() {
           </div>
           
           <Button
-            href="/register"
+            href="/program"
             variant="primary"
             className="hidden md:inline-flex"
-            onClick={() => reachGoal("cta_register")}
           >
-            Стать участником
+            Программа
           </Button>
           
           {/* Mobile Menu Toggle */}
@@ -197,16 +195,15 @@ function SiteHeaderContent() {
              </div>
 
             <Button
-              href="/register"
+              href="/program"
               variant="primary"
               size="lg"
               className="w-full justify-center text-lg font-bold shadow-lg shadow-primary/20"
               onClick={() => {
-                reachGoal("cta_register_mobile_menu");
                 setOpen(false);
               }}
             >
-              Стать участником
+              Программа
             </Button>
 
             {/* Social Links */}
