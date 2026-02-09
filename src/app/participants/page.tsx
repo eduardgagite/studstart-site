@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ParticipantsBoard } from "@/components/participants-board";
+import { QuestionsForm } from "@/components/questions-form";
 
 export const metadata: Metadata = {
   title: "Участники",
@@ -17,6 +18,10 @@ export default function ParticipantsPage() {
             Два режима просмотра: общая таблица по баллам и список по кураторам. Данные
             подтягиваются из внутренней системы и могут загружаться не сразу.
           </p>
+        </section>
+
+        <section className="section-shell section-glow">
+          <QuestionsForm />
         </section>
 
         <section className="section-shell section-glow">
