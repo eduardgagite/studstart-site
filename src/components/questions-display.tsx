@@ -17,6 +17,17 @@ type QuestionItem = {
   createdAt: Date | null;
 };
 
+function parseJsonMaybe(value: unknown): unknown {
+  if (typeof value !== "string") return value;
+  const trimmed = value.trim();
+  if (!trimmed) return value;
+  try {
+    return JSON.parse(trimmed);
+  } catch {
+    return value;
+  }
+}
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
@@ -85,16 +96,19 @@ function parseQuestion(raw: unknown, fallbackId: string): QuestionItem | null {
   const createdAt = parseDate(createdCandidate);
 
   const idCandidate = raw["id"] ?? raw["_id"] ?? raw["uuid"];
-  const id =
-    typeof idCandidate === "string" && idCandidate.trim()
-      ? idCandidate.trim()
-      : fallbackId;
+  let id = fallbackId;
+  if (typeof idCandidate === "string" && idCandidate.trim()) {
+    id = idCandidate.trim();
+  } else if (typeof idCandidate === "number" && Number.isFinite(idCandidate)) {
+    id = String(idCandidate);
+  }
 
   return { id, text, createdAt };
 }
 
 function normalizeQuestions(payload: unknown): QuestionItem[] {
-  const unwrapped = unwrapPayload(payload);
+  const parsed = parseJsonMaybe(payload);
+  const unwrapped = unwrapPayload(parsed);
   const items: unknown[] = [];
 
   if (Array.isArray(unwrapped)) {
