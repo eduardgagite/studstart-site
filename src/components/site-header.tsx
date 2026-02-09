@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { navLinks } from "@/data/navigation";
 import { siteConfig } from "@/config/site";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -13,6 +14,15 @@ import { reachGoal } from "@/lib/ym";
 import { assetPath } from "@/lib/assets";
 
 export function SiteHeader() {
+  const pathname = usePathname();
+  if (pathname?.startsWith("/display")) {
+    return null;
+  }
+
+  return <SiteHeaderContent />;
+}
+
+function SiteHeaderContent() {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
