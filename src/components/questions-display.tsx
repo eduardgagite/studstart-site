@@ -7,6 +7,7 @@ import { cn } from "@/lib/cn";
 
 const REFRESH_INTERVAL_MS = 30_000;
 const FETCH_TIMEOUT_MS = 12_000;
+const ROLLING_WINDOW_MS = 24 * 60 * 60 * 1000;
 const DISPLAY_PARTICLES = [
   { left: "8%", top: "18%", size: 6, opacity: 0.55, duration: "14s", delay: "0s" },
   { left: "22%", top: "8%", size: 4, opacity: 0.45, duration: "12s", delay: "1s" },
@@ -218,6 +219,12 @@ function endOfDay(date: Date) {
   return next;
 }
 
+function getRollingWindow(now: Date, offsetDays = 0) {
+  const end = new Date(now.getTime() - offsetDays * ROLLING_WINDOW_MS);
+  const start = new Date(end.getTime() - ROLLING_WINDOW_MS);
+  return { start, end };
+}
+
 function formatDateLabel(value: Date) {
   return new Intl.DateTimeFormat("ru-RU", {
     day: "numeric",
@@ -257,7 +264,7 @@ export function QuestionsDisplay() {
   const [items, setItems] = useState<QuestionItem[]>([]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
-  const [filterMode, setFilterMode] = useState<FilterMode>("yesterday");
+  const [filterMode, setFilterMode] = useState<FilterMode>("today");
   const [selectedDate, setSelectedDate] = useState<string>(() =>
     toLocalDateKey(new Date())
   );
@@ -368,14 +375,13 @@ export function QuestionsDisplay() {
     let end: Date | null = null;
 
     if (filterMode === "today") {
-      const today = new Date();
-      start = startOfDay(today);
-      end = endOfDay(today);
+      const window = getRollingWindow(new Date(), 0);
+      start = window.start;
+      end = window.end;
     } else if (filterMode === "yesterday") {
-      const yesterday = new Date();
-      yesterday.setDate(yesterday.getDate() - 1);
-      start = startOfDay(yesterday);
-      end = endOfDay(yesterday);
+      const window = getRollingWindow(new Date(), 1);
+      start = window.start;
+      end = window.end;
     } else if (filterMode === "date") {
       if (!selectedDate) return [];
       const chosen = new Date(`${selectedDate}T00:00:00`);
@@ -386,6 +392,9 @@ export function QuestionsDisplay() {
 
     return items.filter((item) => {
       if (!item.createdAt || !start || !end) return false;
+      if (filterMode === "today" || filterMode === "yesterday") {
+        return item.createdAt >= start && item.createdAt < end;
+      }
       return item.createdAt >= start && item.createdAt <= end;
     });
   }, [filterMode, items, selectedDate]);
@@ -497,7 +506,7 @@ export function QuestionsDisplay() {
                 )}
                 onClick={() => setFilterMode("today")}
               >
-                Сегодня
+                За сутки
               </button>
               <button
                 type="button"
@@ -509,7 +518,7 @@ export function QuestionsDisplay() {
                 )}
                 onClick={() => setFilterMode("yesterday")}
               >
-                Вчера
+                Предыдущие сутки
               </button>
               <button
                 type="button"
