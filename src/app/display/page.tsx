@@ -27,20 +27,6 @@ function getDisplayPhotos() {
 
 export default function DisplayPage() {
   const displayPhotos = getDisplayPhotos();
-  const particles = [
-    { left: "12%", top: "18%", size: 6, opacity: 0.35, delay: "-2s", duration: "18s" },
-    { left: "28%", top: "72%", size: 10, opacity: 0.25, delay: "-8s", duration: "26s" },
-    { left: "46%", top: "22%", size: 8, opacity: 0.4, delay: "-12s", duration: "22s" },
-    { left: "64%", top: "64%", size: 12, opacity: 0.3, delay: "-5s", duration: "30s" },
-    { left: "78%", top: "34%", size: 7, opacity: 0.3, delay: "-16s", duration: "20s" },
-    { left: "86%", top: "78%", size: 9, opacity: 0.25, delay: "-10s", duration: "28s" },
-    { left: "18%", top: "52%", size: 5, opacity: 0.2, delay: "-6s", duration: "24s" },
-    { left: "38%", top: "42%", size: 11, opacity: 0.28, delay: "-14s", duration: "32s" },
-    { left: "58%", top: "18%", size: 6, opacity: 0.35, delay: "-3s", duration: "21s" },
-    { left: "72%", top: "52%", size: 8, opacity: 0.32, delay: "-11s", duration: "27s" },
-    { left: "90%", top: "20%", size: 5, opacity: 0.22, delay: "-9s", duration: "19s" },
-    { left: "8%", top: "82%", size: 7, opacity: 0.26, delay: "-7s", duration: "25s" },
-  ];
 
   return (
     <div
@@ -58,25 +44,6 @@ export default function DisplayPage() {
               "linear-gradient(180deg, rgba(11,16,32,0.2) 0%, rgba(11,16,32,0.55) 50%, rgba(11,16,32,0.85) 100%)",
           }}
         />
-      </div>
-
-      {/* Subtle floating particles */}
-      <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        {particles.map((particle, index) => (
-          <span
-            key={`particle-${index}`}
-            className="display-particle"
-            style={{
-              left: particle.left,
-              top: particle.top,
-              width: `${particle.size}px`,
-              height: `${particle.size}px`,
-              opacity: particle.opacity,
-              animationDelay: particle.delay,
-              animationDuration: particle.duration,
-            }}
-          />
-        ))}
       </div>
 
       {/* DVD-style moving logo */}

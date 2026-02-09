@@ -6,6 +6,7 @@ import { assetPath } from "@/lib/assets";
 
 const SPEED_PX_PER_SEC = 60;
 const PADDING_PX = 20;
+const FRAME_INTERVAL_MS = 1000 / 30;
 
 function getRandomDirection() {
   return Math.random() > 0.5 ? 1 : -1;
@@ -57,13 +58,13 @@ export function DisplayDvdLogo() {
     const observer = new ResizeObserver(() => updateRange());
     observer.observe(element);
 
-    let frameId = 0;
-    const tick = (time: number) => {
+    const tick = () => {
+      const now = performance.now();
       if (!lastTimeRef.current) {
-        lastTimeRef.current = time;
+        lastTimeRef.current = now;
       }
-      const delta = Math.min(0.04, (time - lastTimeRef.current) / 1000);
-      lastTimeRef.current = time;
+      const delta = Math.min(0.04, (now - lastTimeRef.current) / 1000);
+      lastTimeRef.current = now;
 
       const rangeX = rangeRef.current.x;
       const rangeY = rangeRef.current.y;
@@ -96,15 +97,15 @@ export function DisplayDvdLogo() {
         nextY + PADDING_PX
       }px, 0)`;
 
-      frameId = window.requestAnimationFrame(tick);
     };
 
-    frameId = window.requestAnimationFrame(tick);
+    tick();
+    const intervalId = window.setInterval(tick, FRAME_INTERVAL_MS);
 
     return () => {
       window.removeEventListener("resize", handleResize);
       observer.disconnect();
-      window.cancelAnimationFrame(frameId);
+      window.clearInterval(intervalId);
     };
   }, []);
 
@@ -113,13 +114,12 @@ export function DisplayDvdLogo() {
       ref={containerRef}
       className="absolute left-0 top-0 z-10 flex flex-col items-center text-center will-change-transform"
     >
-      <div className="absolute -inset-16 -z-10 rounded-full bg-[radial-gradient(circle,rgba(94,177,255,0.5),transparent_65%)] blur-[80px] animate-halo" />
       <Image
         src={assetPath("/images/logo-horizontal-white.png")}
         alt="СтудСтарт"
         width={900}
         height={220}
-        className="h-auto w-[54vw] max-w-[700px] object-contain drop-shadow-[0_12px_50px_rgba(0,0,0,0.65)]"
+        className="h-auto w-[54vw] max-w-[700px] object-contain drop-shadow-[0_6px_20px_rgba(0,0,0,0.45)]"
         priority
       />
     </div>
