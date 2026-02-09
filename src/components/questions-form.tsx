@@ -8,14 +8,31 @@ const SUBMIT_TIMEOUT_MS = 12000;
 
 type SubmitStatus = "idle" | "sending" | "success" | "error";
 
+function getSubmitErrorMessage(error: unknown) {
+  if (error instanceof Error) {
+    const message = error.message || "";
+    if (/AbortError/i.test(error.name)) {
+      return "Время ожидания истекло. Попробуйте еще раз.";
+    }
+    if (/failed to fetch/i.test(message) || /networkerror/i.test(message) || /load failed/i.test(message)) {
+      return "Не удалось подключиться к сервису. Проверьте интернет или доступность вебхука.";
+    }
+    if (/string did not match the expected pattern/i.test(message) || /invalid url/i.test(message)) {
+      return "Неверный адрес сервиса. Проверьте URL вебхука.";
+    }
+    return message;
+  }
+  return "Не удалось отправить сообщение. Попробуйте позже.";
+}
+
 export function QuestionsForm() {
+  const isDev = process.env.NODE_ENV === "development";
   const [text, setText] = useState("");
   const [status, setStatus] = useState<SubmitStatus>("idle");
   const [error, setError] = useState<string | null>(null);
   const [honeypot, setHoneypot] = useState("");
   const abortRef = useRef<AbortController | null>(null);
 
-  const trimmedText = useMemo(() => text.trim(), [text]);
   const normalizedText = useMemo(
     () => text.replace(/\s+/g, " ").trim(),
     [text]
@@ -36,15 +53,25 @@ export function QuestionsForm() {
       return;
     }
 
-    const webhookUrl = process.env.NEXT_PUBLIC_N8N_QUESTIONS_URL;
-    if (!webhookUrl) {
-      setError("Сервис отправки сообщений пока не настроен.");
+    if (honeypot && honeypot.trim().length > 0) {
+      setError("Некорректные данные.");
       setStatus("error");
       return;
     }
 
-    if (honeypot && honeypot.trim().length > 0) {
-      setError("Некорректные данные.");
+    if (isDev) {
+      setStatus("sending");
+      setError(null);
+      window.setTimeout(() => {
+        setText("");
+        setStatus("success");
+      }, 400);
+      return;
+    }
+
+    const webhookUrl = process.env.NEXT_PUBLIC_N8N_QUESTIONS_URL;
+    if (!webhookUrl) {
+      setError("Сервис отправки сообщений пока не настроен.");
       setStatus("error");
       return;
     }
@@ -83,15 +110,7 @@ export function QuestionsForm() {
       setText("");
       setStatus("success");
     } catch (submitError) {
-      let message = "Не удалось отправить сообщение. Попробуйте позже.";
-      if (submitError instanceof Error) {
-        if (submitError.name === "AbortError") {
-          message = "Превышено время ожидания. Попробуйте еще раз.";
-        } else if (submitError.message) {
-          message = submitError.message;
-        }
-      }
-      setError(message);
+      setError(getSubmitErrorMessage(submitError));
       setStatus("error");
     } finally {
       window.clearTimeout(timeoutId);

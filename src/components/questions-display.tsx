@@ -7,6 +7,58 @@ import { cn } from "@/lib/cn";
 
 const REFRESH_INTERVAL_MS = 30_000;
 const FETCH_TIMEOUT_MS = 12_000;
+const DISPLAY_PARTICLES = [
+  { left: "8%", top: "18%", size: 6, opacity: 0.55, duration: "14s", delay: "0s" },
+  { left: "22%", top: "8%", size: 4, opacity: 0.45, duration: "12s", delay: "1s" },
+  { left: "38%", top: "24%", size: 5, opacity: 0.5, duration: "16s", delay: "0.5s" },
+  { left: "52%", top: "10%", size: 3, opacity: 0.35, duration: "10s", delay: "0.2s" },
+  { left: "66%", top: "18%", size: 6, opacity: 0.6, duration: "18s", delay: "0.8s" },
+  { left: "78%", top: "6%", size: 4, opacity: 0.45, duration: "13s", delay: "0.4s" },
+  { left: "88%", top: "20%", size: 5, opacity: 0.5, duration: "17s", delay: "0.6s" },
+  { left: "12%", top: "54%", size: 5, opacity: 0.4, duration: "19s", delay: "0.9s" },
+  { left: "30%", top: "62%", size: 4, opacity: 0.35, duration: "15s", delay: "1.1s" },
+  { left: "58%", top: "58%", size: 6, opacity: 0.55, duration: "20s", delay: "0.3s" },
+  { left: "72%", top: "64%", size: 4, opacity: 0.4, duration: "14s", delay: "0.7s" },
+  { left: "86%", top: "52%", size: 5, opacity: 0.45, duration: "16s", delay: "0.2s" },
+];
+
+const DEV_MESSAGES = [
+  "На форуме очень крутой диджей",
+  "Кто придумал тему для квиза? Было смешно!",
+  "Спасибо за атмосферу, вы лучшие!",
+  "Где можно взять плед? Очень уютно.",
+  "Можно больше кофе на завтраке?",
+  "Сколько нужно баллов, чтобы попасть в топ?",
+  "Фотограф ловит лучшие моменты, респект.",
+  "Музыка на вечернем мероприятии 🔥",
+  "Когда будет следующий квест?",
+  "Передайте привет 2 группе!",
+  "Предлагаю флешмоб на открытии.",
+  "Где найти расписание на завтра?",
+  "Отдельный лайк за горы.",
+  "У кого есть зарядка USB-C?",
+  "Кто ведет утреннюю зарядку? Класс!",
+  "Сделайте фотозону побольше.",
+  "Саша, ты супер ведущий!",
+  "Хочу стикеры форума.",
+  "Спасибо за организацию, всё чётко.",
+  "Можно ли добавить настольные игры?",
+  "Хочу повторить квиз, было топово.",
+  "Где найти куратора моей группы?",
+  "Пусть будет больше мемов на экране!",
+  "Я в восторге от атмосферы.",
+  "Сделайте плейлист форума доступным.",
+  "Кто отвечает за свет? Он огонь.",
+  "Ведущий, ты топ!",
+  "Хочу ещё вечерних активностей.",
+  "Где взять мерч?",
+  "Вопрос: будут ли призы за активность?",
+  "Нужны ли нам дополнительные бейджи?",
+  "Пусть будет ещё больше фото.",
+  "Сегодня лучший день форума!",
+  "Классно, что всё по таймингу.",
+  "Орги, вы супер команда!",
+];
 
 type LoadState = "loading" | "success" | "error";
 type FilterMode = "today" | "yesterday" | "date" | "all";
@@ -26,6 +78,20 @@ function parseJsonMaybe(value: unknown): unknown {
   } catch {
     return value;
   }
+}
+
+function buildMockQuestions(base: Date): QuestionItem[] {
+  return DEV_MESSAGES.map((text, index) => {
+    const createdAt = new Date(base);
+    const dayOffset = Math.floor(index / 9);
+    createdAt.setDate(base.getDate() - dayOffset);
+    createdAt.setMinutes(base.getMinutes() - index * 11);
+    return {
+      id: `dev-${index + 1}`,
+      text,
+      createdAt,
+    };
+  });
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -73,6 +139,13 @@ function parseDate(value: unknown): Date | null {
   return null;
 }
 
+function normalizeText(value: string) {
+  return value
+    .replace(/\p{Cf}/gu, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 function parseQuestion(raw: unknown, fallbackId: string): QuestionItem | null {
   if (!isRecord(raw)) return null;
 
@@ -83,7 +156,8 @@ function parseQuestion(raw: unknown, fallbackId: string): QuestionItem | null {
     raw["value"] ??
     raw["content"];
 
-  const text = typeof textCandidate === "string" ? textCandidate.trim() : "";
+  const text =
+    typeof textCandidate === "string" ? normalizeText(textCandidate) : "";
   if (!text) return null;
 
   const createdCandidate =
@@ -154,7 +228,27 @@ function formatTimestamp(value: Date) {
   }).format(value);
 }
 
+function getFetchErrorMessage(error: unknown) {
+  if (error instanceof Error) {
+    const message = error.message || "";
+    if (/AbortError/i.test(error.name)) {
+      return "Время ожидания истекло. Попробуйте еще раз.";
+    }
+    if (/failed to fetch/i.test(message) || /networkerror/i.test(message) || /load failed/i.test(message)) {
+      return "Не удалось подключиться к сервису. Проверьте интернет или доступность вебхука.";
+    }
+    if (/string did not match the expected pattern/i.test(message) || /invalid url/i.test(message)) {
+      return "Неверный адрес сервиса. Проверьте URL вебхука.";
+    }
+    return message;
+  }
+  return "Не удалось загрузить сообщения.";
+}
+
 export function QuestionsDisplay() {
+  const isDev = process.env.NODE_ENV === "development";
+  const devBaseRef = useRef(new Date());
+  const mockItems = useMemo(() => buildMockQuestions(devBaseRef.current), []);
   const [status, setStatus] = useState<LoadState>("loading");
   const [items, setItems] = useState<QuestionItem[]>([]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -173,6 +267,17 @@ export function QuestionsDisplay() {
   }, []);
 
   const loadData = useCallback(async () => {
+    if (isDev) {
+      if (!mountedRef.current) return;
+      setIsRefreshing(true);
+      window.setTimeout(() => {
+        if (!mountedRef.current) return;
+        setLastUpdated(new Date());
+        setIsRefreshing(false);
+      }, 300);
+      return;
+    }
+
     const webhookUrl = process.env.NEXT_PUBLIC_N8N_QUESTIONS_URL;
     if (!webhookUrl) {
       setStatus("error");
@@ -209,9 +314,7 @@ export function QuestionsDisplay() {
       setErrorMessage(null);
     } catch (error) {
       if (!mountedRef.current) return;
-      const message =
-        error instanceof Error ? error.message : "Не удалось загрузить сообщения.";
-      setErrorMessage(message);
+      setErrorMessage(getFetchErrorMessage(error));
       setStatus("error");
     } finally {
       window.clearTimeout(timeoutId);
@@ -219,13 +322,21 @@ export function QuestionsDisplay() {
         setIsRefreshing(false);
       }
     }
-  }, [items.length]);
+  }, [isDev, items.length]);
 
   useEffect(() => {
+    if (isDev) {
+      setItems(mockItems);
+      setStatus("success");
+      setLastUpdated(new Date());
+      setErrorMessage(null);
+      return;
+    }
+
     loadData();
     const intervalId = window.setInterval(loadData, REFRESH_INTERVAL_MS);
     return () => window.clearInterval(intervalId);
-  }, [loadData]);
+  }, [isDev, loadData, mockItems]);
 
   const availableDates = useMemo(() => {
     const dates = new Set<string>();
@@ -293,35 +404,82 @@ export function QuestionsDisplay() {
           alt=""
           fill
           sizes="100vw"
-          className="object-cover opacity-40 animate-kenburns"
+          className="object-cover opacity-30 animate-kenburns"
           priority
         />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(68,170,255,0.35),transparent_55%),radial-gradient(circle_at_80%_10%,rgba(39,109,255,0.25),transparent_55%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(68,170,255,0.45),transparent_55%),radial-gradient(circle_at_85%_15%,rgba(39,109,255,0.35),transparent_60%)]" />
+        <div
+          className="absolute inset-0 opacity-60"
+          style={{
+            background:
+              "linear-gradient(120deg, rgba(76,148,255,0.3), rgba(45,212,255,0.12), transparent 65%)",
+          }}
+        />
+        <div
+          className="absolute inset-0 opacity-35 mix-blend-soft-light"
+          style={{
+            background:
+              "repeating-linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.04) 1px, transparent 1px, transparent 4px)",
+          }}
+        />
         <div
           className="absolute inset-0"
           style={{
             background:
-              "linear-gradient(180deg, rgba(11,16,32,0.35) 0%, rgba(11,16,32,0.8) 55%, rgba(11,16,32,0.98) 100%)",
+              "linear-gradient(180deg, rgba(11,16,32,0.2) 0%, rgba(11,16,32,0.75) 55%, rgba(11,16,32,0.98) 100%)",
           }}
         />
       </div>
+      <div className="pointer-events-none absolute inset-0">
+        {DISPLAY_PARTICLES.map((particle, index) => (
+          <span
+            key={`particle-${index}`}
+            className="display-particle"
+            style={{
+              left: particle.left,
+              top: particle.top,
+              width: `${particle.size}px`,
+              height: `${particle.size}px`,
+              opacity: particle.opacity,
+              animationDuration: particle.duration,
+              animationDelay: particle.delay,
+            }}
+          />
+        ))}
+      </div>
 
       <div className="relative z-10 flex h-full flex-col gap-8 overflow-hidden px-6 py-8 md:px-12 md:py-10">
-        <div className="flex flex-wrap items-center justify-between gap-6">
-          <div className="space-y-3">
-            <p className="text-xs uppercase tracking-[0.35em] text-slate-300/80">
-              Экран ведущего
-            </p>
-            <h1 className="text-3xl font-semibold md:text-4xl lg:text-5xl">
-              Анонимные сообщения
-            </h1>
-            <p className="text-sm text-slate-300/80 md:text-base">
-              Автообновление каждые 30 секунд.
-              {lastUpdated ? ` Последнее обновление: ${formatTimestamp(lastUpdated)}.` : ""}
-            </p>
+        <div className="flex flex-wrap items-start justify-between gap-6">
+          <div className="max-w-2xl space-y-4">
+            <div className="inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/10 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.4em] text-slate-200/80">
+              <span className="h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse-soft" />
+              Live
+            </div>
+            <div className="space-y-2">
+              <p className="text-xs uppercase tracking-[0.35em] text-slate-300/70">
+                Экран ведущего
+              </p>
+              <h1 className="text-3xl font-semibold md:text-4xl lg:text-5xl">
+                Анонимные сообщения
+              </h1>
+              <p className="text-sm text-slate-300/80 md:text-base">
+                Автообновление каждые 30 секунд.
+                {lastUpdated
+                  ? ` Последнее обновление: ${formatTimestamp(lastUpdated)}.`
+                  : ""}
+              </p>
+            </div>
+            <div className="flex flex-wrap items-center gap-2 text-[11px] uppercase tracking-[0.32em] text-slate-300/80">
+              <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">
+                Показано: {sortedItems.length}
+              </span>
+              <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">
+                Всего: {items.length}
+              </span>
+            </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3 rounded-3xl border border-white/10 bg-white/5 p-3 backdrop-blur-xl">
             <div className="inline-flex rounded-full border border-white/10 bg-white/5 p-1 text-xs font-semibold uppercase tracking-[0.22em] text-slate-200/80">
               <button
                 type="button"
@@ -408,7 +566,7 @@ export function QuestionsDisplay() {
               type="button"
               onClick={loadData}
               className={cn(
-                "inline-flex items-center justify-center rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs uppercase tracking-[0.22em] text-slate-200/80 transition",
+                "inline-flex items-center justify-center rounded-full border border-white/10 bg-white/10 px-4 py-2 text-xs uppercase tracking-[0.22em] text-slate-200/80 transition",
                 isRefreshing ? "opacity-60" : "hover:border-white/30 hover:text-white"
               )}
               disabled={isRefreshing}
@@ -418,12 +576,7 @@ export function QuestionsDisplay() {
           </div>
         </div>
 
-        <div className="flex items-center justify-between text-xs uppercase tracking-[0.32em] text-slate-300/80">
-          <span>Показано: {sortedItems.length}</span>
-          <span>Всего: {items.length}</span>
-        </div>
-
-        <div className="flex-1 overflow-y-auto rounded-3xl border border-white/10 bg-white/5 p-6">
+        <div className="flex-1 overflow-y-auto rounded-[32px] border border-white/10 bg-white/5 p-6 shadow-[0_30px_80px_rgba(0,0,0,0.35)] backdrop-blur-xl md:p-8">
           {status === "loading" && (
             <div className="text-sm text-slate-300/80">Загрузка сообщений...</div>
           )}
@@ -445,10 +598,10 @@ export function QuestionsDisplay() {
               {sortedItems.map((item, index) => (
                 <div
                   key={`${item.id}-${index}`}
-                  className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/10 p-5 text-base leading-relaxed text-white/90 shadow-[0_20px_40px_rgba(0,0,0,0.25)]"
+                  className="rounded-2xl border border-white/10 bg-white/10 p-5 text-base leading-relaxed text-white/90 shadow-[0_20px_40px_rgba(0,0,0,0.28)] backdrop-blur-md animate-fade-up"
+                  style={{ animationDelay: `${index * 60}ms` }}
                 >
-                  <div className="pointer-events-none absolute -right-16 -top-16 h-36 w-36 rounded-full bg-blue-400/10 blur-3xl" />
-                  <p className="relative">{item.text}</p>
+                  {item.text}
                 </div>
               ))}
             </div>
