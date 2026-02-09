@@ -5,12 +5,67 @@ import { cn } from "@/lib/cn";
 import { ProgramDay } from "@/data/program";
 // Иконки убраны по запросу
 
+const RU_MONTHS: Record<string, number> = {
+  января: 0,
+  февраля: 1,
+  марта: 2,
+  апреля: 3,
+  мая: 4,
+  июня: 5,
+  июля: 6,
+  августа: 7,
+  сентября: 8,
+  октября: 9,
+  ноября: 10,
+  декабря: 11,
+};
+
+type DayStatus = "past" | "today" | "future" | "unknown";
+
+function stripTime(date: Date) {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+}
+
+function parseRussianDate(value: string, year: number) {
+  const parts = value.trim().toLowerCase().split(/\s+/);
+  if (parts.length < 2) return null;
+
+  const day = Number(parts[0].replace(/\D/g, ""));
+  const monthName = parts.slice(1).join(" ");
+  const month = RU_MONTHS[monthName];
+
+  if (!day || month === undefined) return null;
+  return new Date(year, month, day);
+}
+
+function getDayStatus(dayDate: Date | null, today: Date): DayStatus {
+  if (!dayDate) return "unknown";
+  if (dayDate.getTime() === today.getTime()) return "today";
+  return dayDate.getTime() < today.getTime() ? "past" : "future";
+}
+
+function getInitialDayIndex(days: ProgramDay[], today: Date) {
+  const withStatus = days.map((day) =>
+    getDayStatus(parseRussianDate(day.date, today.getFullYear()), today)
+  );
+  const todayIndex = withStatus.findIndex((status) => status === "today");
+  if (todayIndex >= 0) return todayIndex;
+
+  const futureIndex = withStatus.findIndex((status) => status === "future");
+  if (futureIndex >= 0) return futureIndex;
+
+  return Math.max(0, days.length - 1);
+}
+
 interface ProgramTimelineProps {
   days: ProgramDay[];
 }
 
 export function ProgramTimeline({ days }: ProgramTimelineProps) {
-  const [activeDayIndex, setActiveDayIndex] = useState(0);
+  const today = stripTime(new Date());
+  const [activeDayIndex, setActiveDayIndex] = useState(() =>
+    getInitialDayIndex(days, today)
+  );
 
   return (
     <div className="flex flex-col gap-8 lg:flex-row lg:gap-16">
@@ -33,6 +88,10 @@ export function ProgramTimeline({ days }: ProgramTimelineProps) {
             <div className="flex overflow-x-auto pb-4 gap-3 lg:flex-col lg:pb-0 lg:gap-3 no-scrollbar snap-x -mx-4 px-4 lg:mx-0 lg:px-0">
               {days.map((day, index) => {
                 const isActive = index === activeDayIndex;
+                const dayDate = parseRussianDate(day.date, today.getFullYear());
+                const status = getDayStatus(dayDate, today);
+                const isPast = status === "past";
+                const isToday = status === "today";
                 
                 return (
                   <button
@@ -42,7 +101,9 @@ export function ProgramTimeline({ days }: ProgramTimelineProps) {
                       "group relative flex-none snap-start min-w-[150px] lg:min-w-0 p-4 rounded-xl border text-left transition-all duration-300 outline-none focus-visible:ring-2 focus-visible:ring-primary",
                       isActive 
                         ? "bg-surface border-primary/50 shadow-[0_4px_20px_-12px_rgb(var(--primary))]" 
-                        : "bg-surface/30 border-transparent hover:bg-surface/50 hover:border-border/50"
+                        : isPast
+                          ? "bg-surface/20 border-border/40 text-muted/70 hover:bg-surface/30 hover:border-border/60"
+                          : "bg-surface/30 border-transparent hover:bg-surface/50 hover:border-border/50"
                     )}
                   >
                     {/* Индикатор активного дня */}
@@ -53,14 +114,28 @@ export function ProgramTimeline({ days }: ProgramTimelineProps) {
                       <div className="absolute inset-x-4 bottom-0 h-0.5 bg-primary rounded-t-full lg:hidden shadow-[0_0_10px_rgb(var(--primary))]" />
                     )}
 
+                    {isPast && (
+                      <div className="absolute right-3 top-3 rotate-6 rounded-full border border-border/60 bg-surface/70 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-muted shadow-sm">
+                        Пройдено
+                      </div>
+                    )}
+                    {isToday && (
+                      <div className="absolute right-3 top-3 rounded-full border border-primary/60 bg-primary/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-primary shadow-[0_0_12px_rgb(var(--primary)_/_0.35)]">
+                        Сегодня
+                      </div>
+                    )}
+
                     <div className="flex flex-col gap-1 pl-2 lg:pl-3">
                       <span className={cn(
                         "text-xs font-bold uppercase tracking-wider transition-colors",
-                        isActive ? "text-primary" : "text-muted group-hover:text-foreground"
+                        isActive ? "text-primary" : isPast ? "text-muted/70" : "text-muted group-hover:text-foreground"
                       )}>
                         День {index + 1}
                       </span>
-                      <span className="text-xl font-bold text-foreground">
+                      <span className={cn(
+                        "text-xl font-bold",
+                        isPast ? "text-muted/60 line-through decoration-dashed decoration-2" : "text-foreground"
+                      )}>
                         {day.date}
                       </span>
                     </div>
@@ -81,9 +156,19 @@ export function ProgramTimeline({ days }: ProgramTimelineProps) {
             key={`header-${activeDayIndex}`}
             className="mb-10 animate-in fade-in slide-in-from-left-4 duration-500 ease-out"
           >
-            <h2 className="text-3xl font-bold md:text-4xl text-transparent bg-clip-text bg-gradient-to-r from-foreground to-foreground/70">
-              {days[activeDayIndex].date}
-            </h2>
+            <div className="flex flex-wrap items-center gap-3">
+              <h2 className="text-3xl font-bold md:text-4xl text-transparent bg-clip-text bg-gradient-to-r from-foreground to-foreground/70">
+                {days[activeDayIndex].date}
+              </h2>
+              {getDayStatus(
+                parseRussianDate(days[activeDayIndex].date, today.getFullYear()),
+                today
+              ) === "today" && (
+                <span className="inline-flex items-center rounded-full border border-primary/60 bg-primary/15 px-3 py-1 text-xs font-bold uppercase tracking-wider text-primary shadow-[0_0_12px_rgb(var(--primary)_/_0.35)]">
+                  Сегодня
+                </span>
+              )}
+            </div>
             <p className="text-muted mt-2 text-lg">
               План действий на {days[activeDayIndex].date}
             </p>
