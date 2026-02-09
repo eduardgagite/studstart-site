@@ -257,7 +257,7 @@ export function QuestionsDisplay() {
   const [items, setItems] = useState<QuestionItem[]>([]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
-  const [filterMode, setFilterMode] = useState<FilterMode>("today");
+  const [filterMode, setFilterMode] = useState<FilterMode>("yesterday");
   const [selectedDate, setSelectedDate] = useState<string>(() =>
     toLocalDateKey(new Date())
   );
