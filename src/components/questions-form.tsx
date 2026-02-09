@@ -16,6 +16,10 @@ export function QuestionsForm() {
   const abortRef = useRef<AbortController | null>(null);
 
   const trimmedText = useMemo(() => text.trim(), [text]);
+  const normalizedText = useMemo(
+    () => text.replace(/\s+/g, " ").trim(),
+    [text]
+  );
   const isSending = status === "sending";
 
   const resetController = () => {
@@ -26,7 +30,7 @@ export function QuestionsForm() {
   };
 
   const handleSubmit = async () => {
-    if (!trimmedText) {
+    if (!normalizedText) {
       setError("Напишите текст сообщения.");
       setStatus("error");
       return;
@@ -55,7 +59,7 @@ export function QuestionsForm() {
 
     try {
       const payload = {
-        text: trimmedText,
+        text: normalizedText,
         created_at: new Date().toISOString(),
         page_url: window.location.href,
         referrer: document.referrer || undefined,
