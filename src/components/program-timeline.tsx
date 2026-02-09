@@ -215,7 +215,7 @@ export function ProgramTimeline({ days }: ProgramTimelineProps) {
                     </div>
                     
                     <div className="flex-1 min-w-0">
-                      <div className="glass-card p-5 md:p-6 rounded-2xl border border-border/40 hover:border-primary/30 transition-all duration-300 hover:bg-surface/60 hover:shadow-lg hover:-translate-y-1 relative overflow-hidden">
+                      <div className="glass-card p-5 md:p-6 rounded-2xl border border-border/40 hover:border-primary/30 transition-all duration-300 hover:bg-surface/60 hover:-translate-y-1 relative overflow-hidden shadow-[0_8px_18px_-12px_rgba(0,0,0,0.18)] hover:shadow-[0_12px_24px_-16px_rgba(0,0,0,0.22)] dark:shadow-[0_12px_30px_-18px_rgba(0,0,0,0.55)] dark:hover:shadow-[0_18px_40px_-18px_rgba(0,0,0,0.7)]">
                         <div className="absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
                         <div
                           className={cn(
