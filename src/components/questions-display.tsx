@@ -392,9 +392,11 @@ export function QuestionsDisplay() {
 
   const sortedItems = useMemo(() => {
     return [...filteredItems].sort((a, b) => {
-      const timeA = a.createdAt?.getTime() ?? 0;
-      const timeB = b.createdAt?.getTime() ?? 0;
-      return timeB - timeA;
+      const timeA = a.createdAt?.getTime();
+      const timeB = b.createdAt?.getTime();
+      const safeA = typeof timeA === "number" ? timeA : Number.POSITIVE_INFINITY;
+      const safeB = typeof timeB === "number" ? timeB : Number.POSITIVE_INFINITY;
+      return safeA - safeB;
     });
   }, [filteredItems]);
 
