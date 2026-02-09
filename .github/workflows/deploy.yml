@@ -37,6 +37,7 @@ jobs:
           NEXT_PUBLIC_SITE_URL: "https://studstart.ru"
           NEXT_PUBLIC_N8N_WEBHOOK_URL: ${{ secrets.N8N_WEBHOOK_URL }}
           NEXT_PUBLIC_N8N_PARTICIPANTS_WEBHOOK_URL: ${{ secrets.N8N_PARTICIPANTS_WEBHOOK_URL }}
+          NEXT_PUBLIC_N8N_QUESTIONS_URL: ${{ secrets.N8N_QUESTIONS_URL }}
           NEXT_PUBLIC_YM_ID: ${{ secrets.NEXT_PUBLIC_YM_ID }}
         run: npm run build
 
