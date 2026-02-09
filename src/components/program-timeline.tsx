@@ -92,6 +92,7 @@ export function ProgramTimeline({ days }: ProgramTimelineProps) {
                 const status = getDayStatus(dayDate, today);
                 const isPast = status === "past";
                 const isToday = status === "today";
+                const needsBadgeSpace = isPast || isToday;
                 
                 return (
                   <button
@@ -125,7 +126,12 @@ export function ProgramTimeline({ days }: ProgramTimelineProps) {
                       </div>
                     )}
 
-                    <div className="flex flex-col gap-1 pl-2 lg:pl-3">
+                    <div
+                      className={cn(
+                        "flex flex-col gap-1 pl-2 lg:pl-3",
+                        needsBadgeSpace && "pt-4 lg:pt-0"
+                      )}
+                    >
                       <span className={cn(
                         "text-xs font-bold uppercase tracking-wider transition-colors",
                         isActive ? "text-primary" : isPast ? "text-muted/70" : "text-muted group-hover:text-foreground"
