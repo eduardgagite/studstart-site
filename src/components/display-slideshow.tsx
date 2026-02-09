@@ -21,6 +21,13 @@ export function DisplaySlideshow({
   );
   const [activeIndex, setActiveIndex] = useState(0);
 
+  const visibleIndices = useMemo(() => {
+    if (slides.length <= 1) {
+      return [0];
+    }
+    return [activeIndex, (activeIndex + 1) % slides.length];
+  }, [activeIndex, slides.length]);
+
   useEffect(() => {
     if (slides.length <= 1) {
       return;
@@ -35,14 +42,14 @@ export function DisplaySlideshow({
 
   return (
     <>
-      {slides.map((src, index) => (
+      {visibleIndices.map((index) => (
         <Image
-          key={`${src}-${index}`}
-          src={src}
+          key={`${slides[index]}-${index}`}
+          src={slides[index]}
           alt=""
           fill
           sizes="100vw"
-          className={`object-cover transition-opacity ease-in-out animate-kenburns ${
+          className={`object-cover transition-opacity ease-in-out ${
             index === activeIndex ? "opacity-70" : "opacity-0"
           }`}
           style={{ transitionDuration: `${fadeMs}ms` }}
