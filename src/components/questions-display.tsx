@@ -445,7 +445,7 @@ export function QuestionsDisplay() {
           }}
         />
       </div>
-      <div className="pointer-events-none absolute inset-0">
+      <div className="pointer-events-none absolute inset-0 hidden sm:block">
         {DISPLAY_PARTICLES.map((particle, index) => (
           <span
             key={`particle-${index}`}
@@ -463,10 +463,10 @@ export function QuestionsDisplay() {
         ))}
       </div>
 
-      <div className="relative z-10 flex h-full flex-col gap-8 overflow-hidden px-6 py-8 md:px-12 md:py-10">
-        <div className="flex flex-wrap items-start justify-between gap-6">
-          <div className="max-w-2xl space-y-4">
-            <div className="inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/10 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.4em] text-slate-200/80">
+      <div className="relative z-10 flex h-full flex-col gap-6 overflow-hidden px-4 py-5 sm:gap-8 sm:px-6 sm:py-8 md:px-12 md:py-10">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+          <div className="w-full max-w-2xl space-y-3 sm:space-y-4">
+            <div className="inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/10 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.4em] text-slate-200/80 sm:px-4 sm:py-2 sm:text-[11px]">
               <span className="h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse-soft" />
               Live
             </div>
@@ -474,17 +474,17 @@ export function QuestionsDisplay() {
               <p className="text-xs uppercase tracking-[0.35em] text-slate-300/70">
                 Экран ведущего
               </p>
-              <h1 className="text-3xl font-semibold md:text-4xl lg:text-5xl">
+              <h1 className="text-2xl font-semibold sm:text-3xl md:text-4xl lg:text-5xl">
                 Анонимные сообщения
               </h1>
-              <p className="text-sm text-slate-300/80 md:text-base">
+              <p className="text-xs text-slate-300/80 sm:text-sm md:text-base">
                 Автообновление каждые 30 секунд.
                 {lastUpdated
                   ? ` Последнее обновление: ${formatTimestamp(lastUpdated)}.`
                   : ""}
               </p>
             </div>
-            <div className="flex flex-wrap items-center gap-2 text-[11px] uppercase tracking-[0.32em] text-slate-300/80">
+            <div className="flex flex-wrap items-center gap-2 text-[10px] uppercase tracking-[0.32em] text-slate-300/80 sm:text-[11px]">
               <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">
                 Показано: {sortedItems.length}
               </span>
@@ -494,12 +494,12 @@ export function QuestionsDisplay() {
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3 rounded-3xl border border-white/10 bg-white/5 p-3 backdrop-blur-xl">
-            <div className="inline-flex rounded-full border border-white/10 bg-white/5 p-1 text-xs font-semibold uppercase tracking-[0.22em] text-slate-200/80">
+          <div className="flex w-full flex-col gap-2 rounded-2xl border border-white/10 bg-white/5 p-3 backdrop-blur-xl sm:flex-row sm:items-center sm:gap-3 sm:rounded-3xl lg:w-auto">
+            <div className="inline-flex w-full flex-nowrap gap-1 overflow-x-auto rounded-full border border-white/10 bg-white/5 p-1 text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-200/80 sm:w-auto sm:text-xs">
               <button
                 type="button"
                 className={cn(
-                  "rounded-full px-4 py-2 transition",
+                  "whitespace-nowrap rounded-full px-4 py-2 transition",
                   filterMode === "today"
                     ? "bg-white/15 text-white"
                     : "hover:text-white"
@@ -511,7 +511,7 @@ export function QuestionsDisplay() {
               <button
                 type="button"
                 className={cn(
-                  "rounded-full px-4 py-2 transition",
+                  "whitespace-nowrap rounded-full px-4 py-2 transition",
                   filterMode === "yesterday"
                     ? "bg-white/15 text-white"
                     : "hover:text-white"
@@ -523,7 +523,7 @@ export function QuestionsDisplay() {
               <button
                 type="button"
                 className={cn(
-                  "rounded-full px-4 py-2 transition",
+                  "whitespace-nowrap rounded-full px-4 py-2 transition",
                   filterMode === "date"
                     ? "bg-white/15 text-white"
                     : "hover:text-white"
@@ -535,7 +535,7 @@ export function QuestionsDisplay() {
               <button
                 type="button"
                 className={cn(
-                  "rounded-full px-4 py-2 transition",
+                  "whitespace-nowrap rounded-full px-4 py-2 transition",
                   filterMode === "all"
                     ? "bg-white/15 text-white"
                     : "hover:text-white"
@@ -547,10 +547,10 @@ export function QuestionsDisplay() {
             </div>
 
             {filterMode === "date" && (
-              <div className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs uppercase tracking-[0.22em] text-slate-200/80">
+              <div className="flex w-full items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-[10px] uppercase tracking-[0.22em] text-slate-200/80 sm:w-auto sm:text-xs">
                 {availableDates.length > 0 ? (
                   <select
-                    className="bg-transparent text-xs uppercase tracking-[0.22em] text-white focus:outline-none"
+                    className="w-full bg-transparent text-[10px] uppercase tracking-[0.22em] text-white focus:outline-none sm:w-auto sm:text-xs"
                     value={selectedDate}
                     onChange={(event) => setSelectedDate(event.target.value)}
                   >
@@ -569,7 +569,7 @@ export function QuestionsDisplay() {
                 ) : (
                   <input
                     type="date"
-                    className="bg-transparent text-xs uppercase tracking-[0.22em] text-white focus:outline-none"
+                    className="w-full bg-transparent text-[10px] uppercase tracking-[0.22em] text-white focus:outline-none sm:w-auto sm:text-xs"
                     value={selectedDate}
                     onChange={(event) => setSelectedDate(event.target.value)}
                   />
@@ -581,7 +581,7 @@ export function QuestionsDisplay() {
               type="button"
               onClick={loadData}
               className={cn(
-                "inline-flex items-center justify-center rounded-full border border-white/10 bg-white/10 px-4 py-2 text-xs uppercase tracking-[0.22em] text-slate-200/80 transition",
+                "inline-flex w-full items-center justify-center rounded-full border border-white/10 bg-white/10 px-4 py-2 text-[10px] uppercase tracking-[0.22em] text-slate-200/80 transition sm:w-auto sm:text-xs",
                 isRefreshing ? "opacity-60" : "hover:border-white/30 hover:text-white"
               )}
               disabled={isRefreshing}
@@ -591,7 +591,7 @@ export function QuestionsDisplay() {
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto rounded-[32px] border border-white/10 bg-white/5 p-6 shadow-[0_30px_80px_rgba(0,0,0,0.35)] backdrop-blur-xl md:p-8">
+        <div className="flex-1 overflow-y-auto rounded-2xl border border-white/10 bg-white/5 p-4 shadow-[0_30px_80px_rgba(0,0,0,0.35)] backdrop-blur-xl sm:rounded-[32px] sm:p-5 md:p-8">
           {status === "loading" && (
             <div className="text-sm text-slate-300/80">Загрузка сообщений...</div>
           )}
@@ -609,11 +609,11 @@ export function QuestionsDisplay() {
           )}
 
           {sortedItems.length > 0 && (
-            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            <div className="grid gap-3 sm:gap-4 md:grid-cols-2 xl:grid-cols-3">
               {sortedItems.map((item, index) => (
                 <div
                   key={`${item.id}-${index}`}
-                  className="rounded-2xl border border-white/10 bg-white/10 p-5 text-base leading-relaxed text-white/90 shadow-[0_20px_40px_rgba(0,0,0,0.28)] backdrop-blur-md animate-fade-up break-words break-all"
+                  className="rounded-2xl border border-white/10 bg-white/10 p-4 text-sm leading-relaxed text-white/90 shadow-[0_20px_40px_rgba(0,0,0,0.28)] backdrop-blur-md animate-fade-up break-words break-all sm:p-5 sm:text-base"
                   style={{ animationDelay: `${index * 60}ms` }}
                 >
                   {item.text}
