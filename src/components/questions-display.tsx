@@ -147,7 +147,7 @@ function parseDate(value: unknown): Date | null {
 function normalizeText(value: string) {
   return value
     .replace(/\p{Cf}/gu, "")
-    .replace(/\s+/g, " ")
+    .replace(/\r\n?/g, "\n")
     .trim();
 }
 
@@ -613,7 +613,7 @@ export function QuestionsDisplay() {
               {sortedItems.map((item, index) => (
                 <div
                   key={`${item.id}-${index}`}
-                  className="rounded-2xl border border-white/10 bg-white/10 p-4 text-sm leading-relaxed text-white/90 shadow-[0_20px_40px_rgba(0,0,0,0.28)] backdrop-blur-md animate-fade-up break-words break-all sm:p-5 sm:text-base"
+                  className="rounded-2xl border border-white/10 bg-white/10 p-4 text-sm leading-relaxed text-white/90 shadow-[0_20px_40px_rgba(0,0,0,0.28)] backdrop-blur-md animate-fade-up break-words whitespace-pre-wrap sm:p-5 sm:text-base"
                   style={{ animationDelay: `${index * 60}ms` }}
                 >
                   {item.text}
