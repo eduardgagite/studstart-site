@@ -2,7 +2,7 @@ export const organizationContacts = [
   {
     name: "СОГУ",
     description: "Северо-Осетинский государственный университет",
-    logo: "/images/logo-sogu.png",
+    logo: "/images/branding/logos/logo-sogu.png",
     socials: [
       {
         label: "VK",
@@ -21,7 +21,7 @@ export const organizationContacts = [
   {
     name: "Профком студентов СОГУ",
     description: "Первичная профсоюзная организация студентов СОГУ",
-    logo: "/images/logo-profkom.png",
+    logo: "/images/branding/logos/logo-profkom.png",
     socials: [
       {
         label: "VK",
@@ -46,7 +46,7 @@ export const organizationContacts = [
   {
     name: "Record Media",
     description: "Студенческий медиацентр",
-    logo: "/images/logo-record.png",
+    logo: "/images/branding/logos/logo-record.png",
     socials: [
       {
         label: "VK",

@@ -18,7 +18,7 @@ export const organizerGroups: OrganizerGroup[] = [
     id: "university",
     name: "Университет",
     description: "Администрация и руководство направлениями форума.",
-    fallbackLogo: "/images/logo-sogu.png",
+    fallbackLogo: "/images/branding/logos/logo-sogu.png",
     members: [
       {
         id: "kokaev-alan",
@@ -50,7 +50,7 @@ export const organizerGroups: OrganizerGroup[] = [
     id: "profkom",
     name: "Профком",
     description: "Команда, которая держит весь форум в тонусе.",
-    fallbackLogo: "/images/logo-profkom.png",
+    fallbackLogo: "/images/branding/logos/logo-profkom.png",
     members: [
       {
         id: "farnieva-elizaveta",
@@ -154,7 +154,7 @@ export const organizerGroups: OrganizerGroup[] = [
     id: "record-media",
     name: "Record Media",
     description: "Медиа-команда форума.",
-    fallbackLogo: "/images/logo-record.png",
+    fallbackLogo: "/images/branding/logos/logo-record.png",
     members: [
       {
         id: "valiev-david",

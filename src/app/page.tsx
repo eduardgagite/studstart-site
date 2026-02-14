@@ -5,7 +5,6 @@ import { siteConfig } from "@/config/site";
 import { assetPath } from "@/lib/assets";
 import { HomeScrollTracker } from "@/components/home-scroll-tracker";
 import { RouteSection } from "@/components/route-section";
-import { cn } from "@/lib/cn";
 
 import { OrganizersShowcase } from "@/components/organizers-showcase";
 import { RectorBlock } from "@/components/rector-block";
@@ -22,7 +21,7 @@ export default function Home() {
       >
         <div className="pointer-events-none absolute inset-y-0 left-1/2 z-0 w-screen -translate-x-1/2">
           <Image
-            src={assetPath("/images/hero-mountains.webp")}
+            src={assetPath("/images/backgrounds/hero-mountains.webp")}
             alt=""
             fill
             sizes="100vw"
@@ -45,7 +44,7 @@ export default function Home() {
               <p className="text-lg text-muted md:text-xl">{heroContent.subtitle}</p>
               <p className="max-w-xl text-base text-muted">{heroContent.description}</p>
               <div className="flex flex-wrap gap-3 pt-2">
-                <TrackedButton href="/program" variant="primary">
+                <TrackedButton href="/about" variant="primary">
                   {heroContent.primaryCta}
                 </TrackedButton>
                 <TrackedButton href="/contacts" variant="secondary">
@@ -53,7 +52,7 @@ export default function Home() {
                 </TrackedButton>
               </div>
               <p className="text-xs text-muted pt-2">
-                Регистрация завершена. Форум идет 8–12 февраля 2026.
+                Форум успешно завершился 12 февраля 2026.
               </p>
             </div>
             <div className="glass-card relative flex flex-col gap-6 p-6 md:p-8">
@@ -73,7 +72,7 @@ export default function Home() {
                 </div>
                 <div className="rounded-md border border-border/60 bg-background/70 p-4">
                   <p className="text-xs uppercase tracking-[0.3em] text-muted">Статус</p>
-                  <p className="mt-2 text-base text-foreground">Форум идет</p>
+                  <p className="mt-2 text-base text-foreground">Форум завершён</p>
                 </div>
               </div>
             </div>
@@ -91,9 +90,11 @@ export default function Home() {
       <section id="photos" className="section-panel panel-night">
         <div className="section-inner space-y-8">
           <div className="flex flex-wrap items-end justify-between gap-6">
-            <div className="space-y-2">
-              <p className="section-eyebrow">Фото</p>
-              <h2 className="text-3xl font-semibold md:text-4xl">Атмосфера СтудСтарта</h2>
+            <div className="max-w-2xl space-y-3">
+              <p className="section-eyebrow text-primary/90">Фото</p>
+              <h2 className="text-3xl font-semibold md:text-4xl">
+                Атмосфера <span className="text-gradient">СтудСтарта</span>
+              </h2>
             </div>
             <TrackedButton
               href={vkAlbumUrl}
@@ -114,7 +115,7 @@ export default function Home() {
         <div className="section-inner space-y-8">
           <div className="space-y-2">
             <p className="section-eyebrow">Команда</p>
-            <h2 className="text-3xl font-semibold md:text-4xl">Кто делает СтудСтарт</h2>
+            <h2 className="text-3xl font-semibold md:text-4xl">Кто сделал СтудСтарт</h2>
           </div>
           <OrganizersShowcase />
         </div>
@@ -122,14 +123,14 @@ export default function Home() {
 
       <section className="section-panel panel-mountains pt-16 pb-20 md:pt-20 md:pb-24">
         <div className="section-inner space-y-6 text-center">
-          <p className="section-eyebrow">Форум идет</p>
-          <h2 className="text-3xl font-semibold md:text-4xl">Следи за СтудСтартом</h2>
+          <p className="section-eyebrow">Форум завершён</p>
+          <h2 className="text-3xl font-semibold md:text-4xl">Смотри итоги СтудСтарта</h2>
           <p className="mx-auto max-w-xl text-sm text-muted md:text-base">
-            Программа, объявления, фото и связь с командой форума — всё в одном месте.
+            Программа, фото, воспоминания и связь с командой форума - всё в одном месте.
           </p>
           <div className="flex flex-wrap justify-center gap-3 pt-2">
-            <TrackedButton href="/program" variant="primary">
-              Смотреть программу
+            <TrackedButton href="/about" variant="primary">
+              Как это было
             </TrackedButton>
             <TrackedButton href="/contacts" variant="secondary">
               Контакты штаба

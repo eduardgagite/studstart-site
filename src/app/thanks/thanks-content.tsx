@@ -51,30 +51,30 @@ export function ThanksContent() {
   const steps = [
     {
       icon: FaCheckCircle,
-      title: "Заявка",
-      desc: "Принята",
+      title: "Регистрация",
+      desc: "Завершена",
       status: "done",
       delay: 300
     },
     {
       icon: FaUserCheck,
       title: "Отбор",
-      desc: "В процессе",
-      status: "current",
+      desc: "Пройден",
+      status: "done",
       delay: 400
     },
     {
       icon: FaIdCard,
-      title: "Интервью",
-      desc: "Жди приглашения",
-      status: "waiting",
+      title: "Форум",
+      desc: "Проведён",
+      status: "done",
       delay: 500
     },
     {
       icon: FaRocket,
-      title: "Форум",
-      desc: "Старт",
-      status: "waiting",
+      title: "Итоги",
+      desc: "Опубликованы",
+      status: "done",
       delay: 600
     }
   ];
@@ -101,14 +101,14 @@ export function ThanksContent() {
             "text-3xl font-bold tracking-tight md:text-5xl transition-all duration-700 delay-100", 
             mounted ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
           )}>
-            Заявка <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">отправлена!</span>
+            Спасибо, что были с нами на <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">СтудСтарте!</span>
           </h1>
           
           <p className={cn(
             "mx-auto mt-4 max-w-lg text-base text-muted md:text-lg transition-all duration-700 delay-200", 
             mounted ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
           )}>
-            Спасибо за регистрацию. Ты стал на шаг ближе к участию в форуме СтудСтарт.
+            Форум успешно завершился 12 февраля 2026. Здесь можно посмотреть программу, итоги и материалы.
           </p>
         </div>
       </section>
@@ -172,7 +172,7 @@ export function ThanksContent() {
                         <span>Telegram-канал</span>
                     </div>
                     <p className="mt-3 text-sm leading-relaxed text-gray-300">
-                        Подписывайся, чтобы не пропустить результаты отбора и важные новости форума.
+                        Подписывайся, чтобы не пропустить фото, разборы и анонсы следующего сезона.
                     </p>
                 </div>
 
@@ -196,13 +196,17 @@ export function ThanksContent() {
         )}>
             <div>
               <h3 className="text-lg font-semibold">Что дальше?</h3>
-              <p className="mt-1 text-sm text-muted">Познакомься с программой или вернись на главную.</p>
+              <p className="mt-1 text-sm text-muted">Посмотри, как это было, или вернись на главную.</p>
             </div>
             
             <div className="space-y-3">
-                <TrackedButton href="/program" variant="secondary" className="w-full justify-between group">
-                    <span>Программа форума</span>
+                <TrackedButton href="/about" variant="secondary" className="w-full justify-between group">
+                    <span>Как это было</span>
                     <FaCalendarAlt className="text-muted transition-colors group-hover:text-primary" />
+                </TrackedButton>
+                <TrackedButton href="/about" variant="ghost" className="w-full justify-between group border border-border/50">
+                    <span>Итоги форума</span>
+                    <FaArrowRight className="text-muted transition-transform group-hover:translate-x-1" />
                 </TrackedButton>
                 <TrackedButton href="/" variant="ghost" className="w-full justify-between group border border-border/50">
                     <span>Вернуться на главную</span>

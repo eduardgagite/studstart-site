@@ -16,7 +16,7 @@ export function DisplaySlideshow({
   fadeMs = 1400,
 }: DisplaySlideshowProps) {
   const slides = useMemo(
-    () => (images.length > 0 ? images : [assetPath("/images/hero-mountains.webp")]),
+    () => (images.length > 0 ? images : [assetPath("/images/backgrounds/hero-mountains.webp")]),
     [images]
   );
   const [activeIndex, setActiveIndex] = useState(0);

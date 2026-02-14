@@ -95,7 +95,7 @@ export function OrganizersList() {
                         <div className="flex h-full w-full items-center justify-center bg-surface-2 p-8 opacity-50 grayscale transition-all duration-500 group-hover:opacity-80 group-hover:grayscale-0">
                           <div className="relative h-24 w-24 transition-transform duration-500 group-hover:scale-110">
                             <Image
-                              src={assetPath(group.fallbackLogo ?? "/images/logo-profkom.png")}
+                              src={assetPath(group.fallbackLogo ?? "/images/branding/logos/logo-profkom.png")}
                               alt={group.name}
                               fill
                               className="object-contain"

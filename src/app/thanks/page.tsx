@@ -3,7 +3,7 @@ import { ThanksContent } from "./thanks-content";
 
 export const metadata: Metadata = {
   title: "Спасибо",
-  description: "Заявка отправлена — спасибо за участие в СтудСтарт.",
+  description: "Форум СтудСтарт завершён — спасибо всем участникам и команде.",
 };
 
 export default function ThanksPage() {
