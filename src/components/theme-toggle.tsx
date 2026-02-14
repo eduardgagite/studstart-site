@@ -2,8 +2,13 @@
 
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
+import { cn } from "@/lib/cn";
 
-export function ThemeToggle() {
+type ThemeToggleProps = {
+  className?: string;
+};
+
+export function ThemeToggle({ className }: ThemeToggleProps) {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
@@ -19,7 +24,10 @@ export function ThemeToggle() {
       type="button"
       onClick={() => setTheme(isDark ? "light" : "dark")}
       aria-label="Переключить тему"
-      className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-border/70 bg-surface text-foreground shadow-soft transition hover:border-primary/60 leading-none"
+      className={cn(
+        "inline-flex h-11 w-11 items-center justify-center rounded-full border border-border/70 bg-surface text-foreground shadow-soft transition hover:border-primary/60 leading-none",
+        className,
+      )}
     >
       {!mounted ? (
         // Render a consistent default during SSR to avoid hydration mismatch

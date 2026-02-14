@@ -95,7 +95,7 @@ export default function ContactsPage() {
             Команда <span className="text-primary">СтудСтарт</span>
           </h2>
           <p className="text-lg text-muted">
-            Люди, которые делают этот форум реальностью.
+            Люди, которые сделали этот форум реальностью.
           </p>
         </div>
         

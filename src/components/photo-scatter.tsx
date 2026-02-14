@@ -7,6 +7,8 @@ interface Photo {
   id: string;
   src: string;
   alt: string;
+  width: number;
+  height: number;
 }
 
 interface PhotoScatterProps {
@@ -14,107 +16,123 @@ interface PhotoScatterProps {
   albumUrl?: string;
 }
 
-const scatterStyles = [
-  "md:rotate-[-6deg] md:translate-y-8 z-10",
-  "md:rotate-[4deg] md:-translate-y-4 z-20",
-  "md:rotate-[-3deg] md:translate-y-2 z-10",
-  "md:rotate-[5deg] md:-translate-y-8 z-30",
-  "md:rotate-[-5deg] md:translate-y-6 z-20",
-  "md:rotate-[3deg] md:-translate-y-2 z-10",
+interface PositionedPhoto {
+  photo: Photo;
+  index: number;
+}
+
+const tiltClasses = [
+  "md:rotate-[-1.4deg]",
+  "md:rotate-[1.1deg]",
+  "md:rotate-[-0.8deg]",
+  "md:rotate-[1.6deg]",
+  "md:rotate-[-1.1deg]",
+  "md:rotate-[0.8deg]",
+];
+
+const frameClasses = [
+  "from-blue-400/58 via-slate-200/16 to-indigo-500/58",
+  "from-indigo-400/56 via-sky-200/14 to-blue-500/56",
+  "from-blue-500/56 via-slate-200/14 to-sky-400/56",
+  "from-sky-500/52 via-blue-200/14 to-indigo-500/54",
+];
+
+const cardRadii = [
+  "28px 24px 30px 20px",
+  "22px 30px 22px 30px",
+  "30px 22px 24px 28px",
+  "24px 28px 30px 22px",
+  "30px 24px 20px 28px",
+  "20px 30px 26px 24px",
 ];
 
 export function PhotoScatter({ photos, albumUrl }: PhotoScatterProps) {
-  // Limit to 6 photos max for the scatter effect to work well
-  const displayPhotos = photos.slice(0, 6);
+  const displayPhotos = photos.slice(0, 9);
 
-  const renderPhotoContent = (photo: Photo, isMobile: boolean, index: number, isFirst: boolean = false) => {
-    const content = isMobile ? (
-      <div
+  const desktopColumns: PositionedPhoto[][] = [[], [], []];
+  const columnHeights = [0, 0, 0];
+
+  displayPhotos.forEach((photo, index) => {
+    const ratio = photo.height / photo.width;
+    const target = columnHeights.indexOf(Math.min(...columnHeights));
+    desktopColumns[target].push({ photo, index });
+    columnHeights[target] += ratio;
+  });
+
+  const renderCard = (photo: Photo, index: number, isDesktop: boolean) => {
+    const radius = cardRadii[index % cardRadii.length];
+    const tiltClass = tiltClasses[index % tiltClasses.length];
+    const frameClass = frameClasses[index % frameClasses.length];
+    const card = (
+      <article
         className={cn(
-          "relative overflow-hidden rounded-2xl bg-surface/10 backdrop-blur-sm border border-white/10 shadow-xl transition-all duration-300",
-          // Stagger and rotate effect for mobile
-          index % 2 === 0 
-            ? "rotate-[-2deg] mt-0 hover:rotate-[-1deg]" 
-            : "rotate-[2deg] mt-6 hover:rotate-[1deg]",
-          "hover:scale-[1.02] active:scale-[0.98]"
+          "group relative overflow-hidden rounded-[1.45rem] p-[2px] shadow-[0_18px_40px_-22px_rgba(7,20,56,0.85)] transition duration-500",
+          "hover:-translate-y-1 hover:shadow-[0_26px_60px_-24px_rgba(7,20,56,0.95)]",
+          isDesktop && tiltClass
         )}
+        style={{ borderRadius: radius, transformOrigin: "center 30%" }}
       >
-        <div className="p-3">
-          <div className="aspect-[4/3] w-full overflow-hidden rounded-xl shadow-inner relative bg-black/20">
-             {/* Subtle inner border/ring for depth */}
-             <div className="absolute inset-0 ring-1 ring-inset ring-black/10 z-10 rounded-xl pointer-events-none" />
-             <Image
-              src={assetPath(photo.src)}
-              alt={photo.alt}
-              fill
-              className="object-cover transition-transform duration-700 ease-out"
-              loading={isFirst ? "eager" : "lazy"}
-              priority={isFirst}
-              sizes="(max-width: 768px) 80vw, 320px"
-            />
-          </div>
-        </div>
-      </div>
-    ) : (
-      <div className="bg-white p-3 shadow-xl rounded-sm transform transition-transform">
-        <div className="aspect-[4/3] overflow-hidden bg-gray-100 relative">
+        <div className={cn("absolute inset-0 bg-gradient-to-br opacity-80", frameClass)} />
+        <div className="relative overflow-hidden rounded-[1.3rem] bg-[#09173e]/80">
           <Image
             src={assetPath(photo.src)}
             alt={photo.alt}
-            fill
-            className="object-cover"
-            loading={isFirst ? "eager" : "lazy"}
-            priority={isFirst}
-            sizes="(max-width: 768px) 80vw, (max-width: 1200px) 33vw, 320px"
+            width={photo.width}
+            height={photo.height}
+            className="block h-auto w-full saturate-[0.9] hue-rotate-[12deg] transition-transform duration-700 ease-out group-hover:scale-[1.035]"
+            loading={index === 0 ? "eager" : "lazy"}
+            priority={index === 0}
+            sizes="(max-width: 767px) 100vw, (max-width: 1279px) 50vw, 33vw"
           />
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_14%_10%,rgba(255,255,255,0.16),transparent_38%),linear-gradient(to_bottom,rgba(9,23,62,0.08),rgba(9,23,62,0.3))]" />
+          <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_bottom,rgba(28,77,196,0.12),rgba(16,43,117,0.22))]" />
+          <div className="pointer-events-none absolute right-3 top-3 h-2.5 w-2.5 rounded-full bg-white/80 shadow-[0_0_0_4px_rgba(3,8,31,0.35)]" />
         </div>
-        <div className="pt-4 pb-2 text-center">
-          <div className="h-2 w-24 bg-gray-100 rounded-full mx-auto" />
-        </div>
-      </div>
+      </article>
     );
 
-    if (albumUrl) {
-      return (
-        <Link
-          href={albumUrl}
-          target="_blank"
-          rel="noreferrer"
-          className="block h-full w-full"
-        >
-          {content}
-        </Link>
-      );
+    if (!albumUrl) {
+      return card;
     }
 
-    return content;
+    return (
+      <Link
+        href={albumUrl}
+        target="_blank"
+        rel="noreferrer"
+        className="block h-full w-full"
+      >
+        {card}
+      </Link>
+    );
   };
 
   return (
-    <div className="relative w-full py-8 md:py-24">
-      {/* Mobile: Horizontal scroll with snap */}
-      <div className="flex gap-4 overflow-x-auto pb-12 pt-4 px-4 -mx-4 md:hidden snap-x snap-mandatory scrollbar-hide items-start">
+    <div className="relative overflow-hidden rounded-[2.2rem] border border-primary/25 bg-[radial-gradient(circle_at_15%_0%,rgba(56,189,248,0.2),transparent_38%),radial-gradient(circle_at_85%_10%,rgba(37,99,235,0.22),transparent_44%),linear-gradient(145deg,rgba(15,23,42,0.92),rgba(14,30,72,0.9))] p-4 md:p-8">
+      <div className="pointer-events-none absolute -left-24 top-0 h-56 w-56 rounded-full bg-accent/20 blur-3xl" />
+      <div className="pointer-events-none absolute -right-16 bottom-0 h-60 w-60 rounded-full bg-primary/20 blur-3xl" />
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgba(148,163,184,0.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(148,163,184,0.08)_1px,transparent_1px)] bg-[size:26px_26px] opacity-35" />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/5 to-transparent" />
+
+      <div className="relative grid gap-4 sm:grid-cols-2 md:hidden">
         {displayPhotos.map((photo, index) => (
           <div
             key={photo.id}
-            className="flex-none w-[80vw] max-w-[320px] snap-center first:pl-2 last:pr-6"
+            className={cn(index % 2 === 0 ? "sm:-translate-y-1" : "sm:translate-y-1")}
           >
-            {renderPhotoContent(photo, true, index, index === 0)}
+            {renderCard(photo, index, false)}
           </div>
         ))}
       </div>
 
-      {/* Desktop: Scattered layout */}
-      <div className="hidden md:grid md:grid-cols-3 lg:grid-cols-3 gap-8 items-center justify-center max-w-5xl mx-auto">
-        {displayPhotos.map((photo, index) => (
-          <div
-            key={photo.id}
-            className={cn(
-              "group relative transition-all duration-500 ease-out hover:z-50 hover:scale-110 hover:rotate-0 hover:shadow-2xl",
-              scatterStyles[index % scatterStyles.length]
-            )}
-          >
-            {renderPhotoContent(photo, false, index, index === 0)}
+      <div className="relative hidden gap-5 md:grid md:grid-cols-3 lg:gap-6">
+        {desktopColumns.map((column, columnIndex) => (
+          <div key={`column-${columnIndex}`} className="space-y-5 lg:space-y-6">
+            {column.map(({ photo, index }) => (
+              <div key={photo.id}>
+                {renderCard(photo, index, true)}
+              </div>
+            ))}
           </div>
         ))}
       </div>

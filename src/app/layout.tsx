@@ -84,7 +84,7 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: {
-    default: `${siteConfig.name} — форум первокурсников СОГУ`,
+    default: `${siteConfig.name} — итоги форума первокурсников СОГУ`,
     template: `%s — ${siteConfig.name}`,
   },
   description: siteConfig.description,

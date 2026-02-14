@@ -415,7 +415,7 @@ export function QuestionsDisplay() {
     <div className="fixed inset-0 z-[9999] overflow-hidden bg-[#0b1020] text-slate-100">
       <div className="absolute inset-0 overflow-hidden" aria-hidden>
         <Image
-          src={assetPath("/images/hero-mountains.webp")}
+          src={assetPath("/images/backgrounds/hero-mountains.webp")}
           alt=""
           fill
           sizes="100vw"

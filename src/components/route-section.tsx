@@ -83,7 +83,7 @@ const steps = [
   },
   {
     title: "Форум",
-    description: "Форум идет — стартовая точка студенческой истории.",
+    description: "Форум состоялся - стартовая точка студенческой истории.",
     icon: (className: string) => (
       <svg
         aria-hidden="true"
@@ -126,10 +126,10 @@ const markerPositions = steps.map((_, index) => {
     y: compassCenter + Math.sin(angle) * markerOrbit,
   };
 });
+const completedIndex = steps.length - 1;
 
 export function RouteSection() {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [activeHover, setActiveHover] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(completedIndex);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const compassRef = useRef<HTMLDivElement | null>(null);
   const cardRefs = useRef<Array<HTMLButtonElement | null>>([]);
@@ -140,11 +140,9 @@ export function RouteSection() {
     y2: number;
   } | null>(null);
   const activeStep = steps[activeIndex];
-  const progress = ((activeIndex + 1) / steps.length) * compassCircumference;
-
-  useEffect(() => {
-    setActiveHover(false);
-  }, [activeIndex]);
+  const completedCount = completedIndex + 1;
+  const routeIsComplete = completedCount === steps.length;
+  const progress = (completedCount / steps.length) * compassCircumference;
 
   useEffect(() => {
     const updateLine = () => {
@@ -189,9 +187,13 @@ export function RouteSection() {
       <div className="section-inner space-y-10 md:space-y-12">
         <div className="max-w-2xl space-y-3">
           <p className="section-eyebrow">Как проходил отбор</p>
-          <h2 className="text-4xl font-semibold md:text-5xl">Маршрут к форуму</h2>
+          <h2 className="text-4xl font-semibold md:text-5xl">Маршрут участников</h2>
           <p className="text-sm text-muted md:text-base">
-            Так проходил путь участников: от заявки до форума в горах.
+            Так проходил путь участников: от заявки до финального дня форума в горах.
+          </p>
+          <p className="inline-flex items-center gap-2 rounded-full border border-primary/35 bg-primary/10 px-3 py-1 text-[0.63rem] font-semibold uppercase tracking-[0.18em] text-primary">
+            <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+            Маршрут закрыт: {completedCount}/{steps.length}
           </p>
         </div>
 
@@ -316,7 +318,7 @@ export function RouteSection() {
                     {/* Маркеры */}
                     {steps.map((step, index) => {
                       const isActive = index === activeIndex;
-                      const isPast = index < activeIndex;
+                      const isCompleted = index <= completedIndex;
                       const fallbackAngle =
                         (index / steps.length) * Math.PI * 2 - Math.PI / 2;
                       const fallbackPosition = {
@@ -367,14 +369,14 @@ export function RouteSection() {
                             fill={
                               isActive
                                 ? "rgb(var(--surface-1))"
-                                : isPast 
+                                : isCompleted
                                 ? "rgb(var(--surface-1) / 0.8)" 
                                 : "rgb(var(--surface-1) / 0.6)"
                             }
                             stroke={
                               isActive
                                 ? "rgb(var(--primary))"
-                                : isPast
+                                : isCompleted
                                 ? "rgb(var(--primary) / 0.5)"
                                 : "rgb(var(--border) / 0.5)"
                             }
@@ -393,12 +395,12 @@ export function RouteSection() {
                               "font-bold tabular-nums text-[11px] md:text-xs transition-colors duration-300",
                               isActive 
                                 ? "fill-primary" 
-                                : isPast
+                                : isCompleted
                                 ? "fill-primary/70"
                                 : "fill-muted"
                             )}
                           >
-                            {index + 1}
+                            {isCompleted && !isActive ? "✓" : index + 1}
                           </text>
                         </g>
                       );
@@ -421,7 +423,9 @@ export function RouteSection() {
                     style={{ inset: textInset }}
                   >
                     <p className="text-[0.6rem] uppercase tracking-[0.2em] text-primary/80 mb-3 font-medium">
-                      Этап {activeIndex + 1} из {steps.length}
+                      {routeIsComplete
+                        ? `Маршрут закрыт - ${completedCount}/${steps.length}`
+                        : `Этап ${activeIndex + 1} из ${steps.length}`}
                     </p>
                     <h3
                       className="text-2xl font-bold leading-tight break-words md:text-3xl text-foreground"
@@ -434,6 +438,11 @@ export function RouteSection() {
                     >
                       {activeStep.description}
                     </p>
+                    {routeIsComplete && (
+                      <p className="mt-4 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[0.58rem] font-semibold uppercase tracking-[0.16em] text-primary">
+                        Все этапы пройдены
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -447,7 +456,7 @@ export function RouteSection() {
                 Журнал маршрута
               </p>
               <span className="text-[0.6rem] uppercase tracking-[0.26em] text-muted whitespace-nowrap hidden sm:inline-block">
-                Полевая тетрадь
+                {routeIsComplete ? `${completedCount}/${steps.length} завершено` : "Полевая тетрадь"}
               </span>
             </div>
             
@@ -470,7 +479,7 @@ export function RouteSection() {
                    <div className="flex flex-col gap-6">
                      {steps.map((step, index) => {
                        const isActive = index === activeIndex;
-                       const isPast = index < activeIndex;
+                       const isCompleted = index <= completedIndex;
                        const isLast = index === steps.length - 1;
                        
                        return (
@@ -483,7 +492,7 @@ export function RouteSection() {
                               <div
                                 className={cn(
                                   "absolute left-1/2 -translate-x-1/2 top-[-1.5rem] bottom-1/2 w-px",
-                                  index <= activeIndex ? "bg-primary" : "bg-border/30"
+                                  index <= completedIndex ? "bg-primary" : "bg-border/30"
                                 )}
                               />
                             )}
@@ -493,7 +502,7 @@ export function RouteSection() {
                               <div
                                 className={cn(
                                   "absolute left-1/2 -translate-x-1/2 top-1/2 bottom-[-1.5rem] w-px",
-                                  isPast
+                                  isCompleted
                                     ? "bg-primary"
                                     : isActive
                                     ? "bg-gradient-to-b from-primary via-primary/40 to-transparent"
@@ -508,13 +517,13 @@ export function RouteSection() {
                                 "relative z-10 rounded-full border transition-all duration-500 box-content",
                                 isActive
                                   ? "h-3.5 w-3.5 bg-primary border-primary shadow-[0_0_12px_rgb(var(--primary))]"
-                                  : isPast
+                                  : isCompleted
                                   ? "h-2.5 w-2.5 bg-primary/70 border-primary/30"
                                   : "h-2 w-2 bg-surface border-border/50"
                               )}
                               style={{
-                                backgroundColor: isActive || isPast ? "rgb(var(--primary))" : "rgb(var(--surface))",
-                                borderColor: isActive || isPast ? "transparent" : "rgba(var(--border), 0.5)",
+                                backgroundColor: isActive || isCompleted ? "rgb(var(--primary))" : "rgb(var(--surface))",
+                                borderColor: isActive || isCompleted ? "transparent" : "rgba(var(--border), 0.5)",
                               }}
                             />
                           </div>
@@ -530,6 +539,8 @@ export function RouteSection() {
                                  "w-full text-left rounded-xl p-4 transition-all duration-300 border backdrop-blur-sm flex gap-4 items-start group-hover:border-border/60",
                                  isActive
                                    ? "bg-surface/80 border-primary/30 shadow-lg translate-x-2"
+                                   : isCompleted
+                                   ? "border-primary/10 bg-surface/30 hover:bg-surface/50 hover:translate-x-1"
                                    : "border-transparent bg-surface/20 hover:bg-surface/40 hover:translate-x-1"
                                )}
                              >
@@ -538,6 +549,8 @@ export function RouteSection() {
                                  "flex-none h-10 w-10 md:h-12 md:w-12 rounded-lg border flex items-center justify-center transition-colors duration-300",
                                  isActive 
                                    ? "bg-primary/10 border-primary/30 text-primary" 
+                                   : isCompleted
+                                   ? "bg-primary/5 border-primary/20 text-primary/80 group-hover:text-primary"
                                    : "bg-surface/50 border-border/30 text-muted group-hover:text-foreground group-hover:border-primary/20"
                                )}>
                                  {step.icon(cn("transition-transform duration-300", isActive ? "scale-110" : "scale-100", "h-6 w-6"))}
@@ -547,20 +560,42 @@ export function RouteSection() {
                                  <div className="flex items-center justify-between mb-1">
                                    <span className={cn(
                                      "text-[0.6rem] font-mono uppercase tracking-widest transition-colors",
-                                     isActive ? "text-primary" : "text-muted"
+                                     isActive ? "text-primary" : isCompleted ? "text-primary/70" : "text-muted"
                                    )}>
                                      Этап 0{index + 1}
+                                   </span>
+                                   <span
+                                     className={cn(
+                                       "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[0.55rem] font-semibold uppercase tracking-[0.12em]",
+                                       isCompleted
+                                         ? "border-primary/25 bg-primary/10 text-primary"
+                                         : "border-border/35 bg-surface/40 text-muted/80"
+                                     )}
+                                   >
+                                     <svg
+                                       aria-hidden="true"
+                                       viewBox="0 0 16 16"
+                                       className="h-2.5 w-2.5"
+                                       fill="none"
+                                       stroke="currentColor"
+                                       strokeWidth="1.7"
+                                       strokeLinecap="round"
+                                       strokeLinejoin="round"
+                                     >
+                                       <path d="M3.5 8l2.6 2.6L12.5 4.8" />
+                                     </svg>
+                                     {isCompleted ? "Пройдено" : "В пути"}
                                    </span>
                                  </div>
                                  <h3 className={cn(
                                    "text-lg font-bold mb-1.5 transition-colors",
-                                   isActive ? "text-foreground" : "text-foreground/80"
+                                   isActive ? "text-foreground" : isCompleted ? "text-foreground/90" : "text-foreground/80"
                                  )}>
                                    {step.title}
                                  </h3>
                                  <p className={cn(
                                    "text-xs leading-relaxed transition-colors line-clamp-2",
-                                   isActive ? "text-muted" : "text-muted/60"
+                                   isActive ? "text-muted" : isCompleted ? "text-muted/80" : "text-muted/60"
                                  )}>
                                    {step.description}
                                  </p>

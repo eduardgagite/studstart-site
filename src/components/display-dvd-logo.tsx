@@ -115,7 +115,7 @@ export function DisplayDvdLogo() {
       className="absolute left-0 top-0 z-10 flex flex-col items-center text-center will-change-transform"
     >
       <Image
-        src={assetPath("/images/logo-horizontal-white.png")}
+        src={assetPath("/images/branding/logos/logo-horizontal-white.png")}
         alt="СтудСтарт"
         width={900}
         height={220}

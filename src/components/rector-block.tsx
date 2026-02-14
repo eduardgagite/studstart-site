@@ -22,7 +22,7 @@ export const RectorBlock = () => {
                  
                  <div className="relative w-64 md:w-80 aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl bg-muted">
                     <Image
-                        src={assetPath("/images/ogoev-alan-uruzmagovich.webp")}
+                        src={assetPath("/images/people/featured/ogoev-alan-uruzmagovich.webp")}
                         alt="Огоев Алан Урузмагович"
                         fill
                         className="object-cover transition-transform duration-700 group-hover:scale-105"

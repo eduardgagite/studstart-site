@@ -315,16 +315,16 @@ export function RegistrationForm() {
           <FaExclamationCircle className="h-20 w-20 animate-pulse" />
         </div>
         <h2 className="bg-gradient-to-r from-primary to-accent bg-clip-text text-3xl font-bold text-transparent md:text-4xl">
-          Регистрация завершена
+          Форум завершён
         </h2>
         <p className="mt-4 text-lg text-muted">
-          Мы уже набрали участников, форум идет 8–12 февраля 2026. <br />
-          Следите за программой и новостями, чтобы быть в курсе.
+          Форум успешно прошёл 8-12 февраля 2026. <br />
+          Смотрите, как это было: фото и материалы, чтобы вспомнить ключевые моменты.
         </p>
 
         <div className="mt-6 flex flex-wrap justify-center gap-3">
-          <TrackedButton href="/program" variant="primary">
-            Смотреть программу
+          <TrackedButton href="/about" variant="primary">
+            Как это было
           </TrackedButton>
           <TrackedButton href="/contacts" variant="secondary">
             Контакты штаба

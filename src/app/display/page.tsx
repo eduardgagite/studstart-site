@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   description: "Полноэкранный баннер для проектора",
 };
 
-const DISPLAY_PHOTOS_DIR = path.join(process.cwd(), "public", "images", "display");
+const DISPLAY_PHOTOS_DIR = path.join(process.cwd(), "public", "images", "gallery", "display");
 
 function getDisplayPhotos() {
   try {
@@ -19,7 +19,7 @@ function getDisplayPhotos() {
       .filter((file) => !file.startsWith("."))
       .filter((file) => /\.(png|jpe?g|webp|avif)$/i.test(file))
       .sort((a, b) => a.localeCompare(b, "ru"))
-      .map((file) => assetPath(`/images/display/${file}`));
+      .map((file) => assetPath(`/images/gallery/display/${file}`));
   } catch {
     return [];
   }
