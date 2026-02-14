@@ -34,7 +34,7 @@ export function QuestionsForm() {
   const abortRef = useRef<AbortController | null>(null);
 
   const normalizedText = useMemo(
-    () => text.replace(/\s+/g, " ").trim(),
+    () => text.replace(/\r\n?/g, "\n").trim(),
     [text]
   );
   const isSending = status === "sending";
