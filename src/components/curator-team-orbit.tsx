@@ -48,15 +48,15 @@ export function CuratorTeamOrbit({
 
   const orbitVars: OrbitStyle = outerMembers.length
     ? {
-        "--orbit-inner-mobile": "90px",
+        "--orbit-inner-mobile": "78px",
         "--orbit-inner-desktop": "116px",
-        "--orbit-outer-mobile": "132px",
+        "--orbit-outer-mobile": "112px",
         "--orbit-outer-desktop": "164px",
       }
     : {
-        "--orbit-inner-mobile": "116px",
+        "--orbit-inner-mobile": "98px",
         "--orbit-inner-desktop": "146px",
-        "--orbit-outer-mobile": "132px",
+        "--orbit-outer-mobile": "112px",
         "--orbit-outer-desktop": "164px",
       };
 

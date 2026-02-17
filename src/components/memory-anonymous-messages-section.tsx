@@ -1,10 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { cn } from "@/lib/cn";
 
 const REFRESH_INTERVAL_MS = 30_000;
 const FETCH_TIMEOUT_MS = 12_000;
+const ITEMS_PER_PAGE = 9;
 
 const DEV_MESSAGES = [
   "На форуме очень крутой диджей",
@@ -236,6 +238,7 @@ function getFetchErrorMessage(error: unknown) {
 export function MemoryAnonymousMessagesSection() {
   const isDev = process.env.NODE_ENV === "development";
   const devBaseRef = useRef(new Date());
+  const cardTextRefs = useRef<Record<string, HTMLParagraphElement | null>>({});
   const mockItems = useMemo(() => buildMockQuestions(devBaseRef.current), []);
   const [status, setStatus] = useState<LoadState>("loading");
   const [items, setItems] = useState<QuestionItem[]>([]);
@@ -244,6 +247,13 @@ export function MemoryAnonymousMessagesSection() {
   const [filterMode, setFilterMode] = useState<FilterMode>("all");
   const [sortMode, setSortMode] = useState<SortMode>("newest");
   const [selectedDate, setSelectedDate] = useState<string>(() => toLocalDateKey(new Date()));
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isTruncatedById, setIsTruncatedById] = useState<Record<string, boolean>>({});
+  const [activeMessage, setActiveMessage] = useState<{
+    id: string;
+    text: string;
+    createdLabel: string;
+  } | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const mountedRef = useRef(true);
 
@@ -364,144 +374,346 @@ export function MemoryAnonymousMessagesSection() {
     });
   }, [filteredItems, sortMode]);
 
+  const totalPages = useMemo(
+    () => Math.max(1, Math.ceil(sortedItems.length / ITEMS_PER_PAGE)),
+    [sortedItems.length],
+  );
+  const pageStartIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const pagedItems = useMemo(
+    () => sortedItems.slice(pageStartIndex, pageStartIndex + ITEMS_PER_PAGE),
+    [pageStartIndex, sortedItems],
+  );
+
   const emptyState = status === "success" && sortedItems.length === 0;
+  const setCardTextRef = useCallback((id: string, node: HTMLParagraphElement | null) => {
+    cardTextRefs.current[id] = node;
+  }, []);
+
+  const measureCardTruncation = useCallback(() => {
+    setIsTruncatedById((previous) => {
+      const next: Record<string, boolean> = {};
+
+      for (let index = 0; index < pagedItems.length; index += 1) {
+        const item = pagedItems[index];
+        const absoluteIndex = pageStartIndex + index;
+        const key = `${item.id}-${absoluteIndex}`;
+        const element = cardTextRefs.current[key];
+        if (!element || !item.text.trim()) {
+          next[key] = false;
+          continue;
+        }
+
+        const likelyLongText = item.text.trim().length > 180;
+        const heightOverflow = element.scrollHeight - element.clientHeight > 1;
+        const widthOverflow = element.scrollWidth - element.clientWidth > 1;
+        next[key] = heightOverflow || widthOverflow || likelyLongText;
+      }
+
+      const nextKeys = Object.keys(next);
+      const prevKeys = Object.keys(previous);
+
+      if (nextKeys.length !== prevKeys.length) {
+        return next;
+      }
+
+      for (const key of nextKeys) {
+        if (previous[key] !== next[key]) {
+          return next;
+        }
+      }
+
+      return previous;
+    });
+  }, [pageStartIndex, pagedItems]);
+
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(measureCardTruncation);
+    window.addEventListener("resize", measureCardTruncation);
+    if ("fonts" in document) {
+      void document.fonts.ready.then(() => {
+        measureCardTruncation();
+      });
+    }
+
+    let observer: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== "undefined") {
+      observer = new ResizeObserver(() => {
+        measureCardTruncation();
+      });
+      Object.values(cardTextRefs.current).forEach((element) => {
+        if (element) {
+          observer?.observe(element);
+        }
+      });
+    }
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener("resize", measureCardTruncation);
+      observer?.disconnect();
+    };
+  }, [measureCardTruncation]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filterMode, selectedDate, sortMode]);
+
+  useEffect(() => {
+    setCurrentPage((previous) => Math.min(previous, totalPages));
+  }, [totalPages]);
+
+  useEffect(() => {
+    if (!activeMessage) {
+      return;
+    }
+
+    const previousOverflow = document.body.style.overflow;
+    const previousPaddingRight = document.body.style.paddingRight;
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setActiveMessage(null);
+      }
+    };
+
+    document.body.style.overflow = "hidden";
+    if (scrollbarWidth > 0) {
+      document.body.style.paddingRight = `${scrollbarWidth}px`;
+    }
+    window.addEventListener("keydown", handleEscape);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.body.style.paddingRight = previousPaddingRight;
+      window.removeEventListener("keydown", handleEscape);
+    };
+  }, [activeMessage]);
 
   return (
-    <section className="section-shell memory-anonymous-shell space-y-6">
-      <div className="memory-anonymous-headline space-y-3">
-        <p className="section-eyebrow">Анонимные сообщения</p>
-        <h2 className="text-2xl font-semibold md:text-3xl">Голоса форума без имён</h2>
-        <p className="memory-anonymous-copy">
-          Сообщения берутся из общей ленты и автоматически обновляются каждые 30 секунд.
-          {lastUpdated ? (
-            <span className="memory-anonymous-copy-updated">
-              Последнее обновление: {formatTimestamp(lastUpdated)}.
-            </span>
-          ) : null}
-        </p>
-        <div className="memory-anonymous-stats">
-          <span>Показано: {sortedItems.length}</span>
-          <span>Всего: {items.length}</span>
+    <>
+      <section className="section-shell memory-anonymous-shell space-y-6">
+        <div className="memory-anonymous-headline space-y-3">
+          <p className="section-eyebrow">Анонимные сообщения</p>
+          <h2 className="memory-anonymous-title text-2xl font-semibold md:text-3xl">Голоса форума без имён</h2>
+          <p className="memory-anonymous-copy">
+            Сообщения берутся из общей ленты и автоматически обновляются каждые 30 секунд.
+            {lastUpdated ? (
+              <span className="memory-anonymous-copy-updated">
+                <span className="memory-anonymous-copy-updated-dot" aria-hidden />
+                Последнее обновление: {formatTimestamp(lastUpdated)}.
+              </span>
+            ) : null}
+          </p>
+          <div className="memory-anonymous-stats">
+            <span>Показано: {sortedItems.length}</span>
+            <span>Всего: {items.length}</span>
+          </div>
         </div>
-      </div>
 
-      <div className="memory-anonymous-toolbar">
-        <section className="memory-anonymous-control-group" data-group="period" aria-label="Фильтр сообщений">
-          <p className="memory-anonymous-control-title">Период</p>
-          <div className="memory-anonymous-control-row" role="tablist" aria-label="Фильтр сообщений">
-            <button
-              type="button"
-              className={cn("memory-anonymous-control-btn", filterMode === "date" && "is-active")}
-              onClick={() => setFilterMode("date")}
-            >
-              <span className="memory-anonymous-control-btn-icon" aria-hidden>●</span>
-              <span>Дата</span>
-            </button>
-            <button
-              type="button"
-              className={cn("memory-anonymous-control-btn", filterMode === "all" && "is-active")}
-              onClick={() => setFilterMode("all")}
-            >
-              <span className="memory-anonymous-control-btn-icon" aria-hidden>∞</span>
-              <span>Все</span>
-            </button>
-          </div>
-          {filterMode === "date" && (
-            <div className="memory-anonymous-date-wrap">
-              {availableDates.length > 0 ? (
-                <select
-                  className="memory-anonymous-date"
-                  value={selectedDate}
-                  onChange={(event) => setSelectedDate(event.target.value)}
-                >
-                  {availableDates.map((date) => {
-                    const parsed = new Date(`${date}T00:00:00`);
-                    const label = Number.isNaN(parsed.getTime())
-                      ? date
-                      : formatDateLabel(parsed);
-                    return (
-                      <option key={date} value={date}>
-                        {label}
-                      </option>
-                    );
-                  })}
-                </select>
-              ) : (
-                <input
-                  type="date"
-                  className="memory-anonymous-date"
-                  value={selectedDate}
-                  onChange={(event) => setSelectedDate(event.target.value)}
-                />
-              )}
+        <div className="memory-anonymous-toolbar">
+          <section className="memory-anonymous-control-group" data-group="period" aria-label="Фильтр сообщений">
+            <p className="memory-anonymous-control-title">Период</p>
+            <div className="memory-anonymous-control-row" role="tablist" aria-label="Фильтр сообщений">
+              <button
+                type="button"
+                className={cn("memory-anonymous-control-btn", filterMode === "date" && "is-active")}
+                onClick={() => setFilterMode("date")}
+              >
+                <span className="memory-anonymous-control-btn-icon" aria-hidden>●</span>
+                <span>Дата</span>
+              </button>
+              <button
+                type="button"
+                className={cn("memory-anonymous-control-btn", filterMode === "all" && "is-active")}
+                onClick={() => setFilterMode("all")}
+              >
+                <span className="memory-anonymous-control-btn-icon" aria-hidden>∞</span>
+                <span>Все</span>
+              </button>
             </div>
+            {filterMode === "date" && (
+              <div className="memory-anonymous-date-wrap">
+                {availableDates.length > 0 ? (
+                  <select
+                    className="memory-anonymous-date"
+                    value={selectedDate}
+                    onChange={(event) => setSelectedDate(event.target.value)}
+                  >
+                    {availableDates.map((date) => {
+                      const parsed = new Date(`${date}T00:00:00`);
+                      const label = Number.isNaN(parsed.getTime())
+                        ? date
+                        : formatDateLabel(parsed);
+                      return (
+                        <option key={date} value={date}>
+                          {label}
+                        </option>
+                      );
+                    })}
+                  </select>
+                ) : (
+                  <input
+                    type="date"
+                    className="memory-anonymous-date"
+                    value={selectedDate}
+                    onChange={(event) => setSelectedDate(event.target.value)}
+                  />
+                )}
+              </div>
+            )}
+          </section>
+
+          <section className="memory-anonymous-control-group" data-group="sort" aria-label="Сортировка по дате">
+            <p className="memory-anonymous-control-title">Сортировка</p>
+            <div className="memory-anonymous-control-row" role="tablist" aria-label="Сортировка по дате">
+              <button
+                type="button"
+                className={cn("memory-anonymous-control-btn", sortMode === "newest" && "is-active")}
+                onClick={() => setSortMode("newest")}
+              >
+                <span className="memory-anonymous-control-btn-icon" aria-hidden>↓</span>
+                <span>Сначала новые</span>
+              </button>
+              <button
+                type="button"
+                className={cn("memory-anonymous-control-btn", sortMode === "oldest" && "is-active")}
+                onClick={() => setSortMode("oldest")}
+              >
+                <span className="memory-anonymous-control-btn-icon" aria-hidden>↑</span>
+                <span>Сначала старые</span>
+              </button>
+            </div>
+          </section>
+
+          <section
+            className="memory-anonymous-control-group memory-anonymous-control-group-service"
+            data-group="service"
+            aria-label="Действия"
+          >
+            <p className="memory-anonymous-control-title">Сервис</p>
+            <div className="memory-anonymous-control-row">
+              <button
+                type="button"
+                className={cn("memory-anonymous-control-btn memory-anonymous-control-btn-refresh", isRefreshing && "is-loading")}
+                onClick={loadData}
+                disabled={isRefreshing}
+              >
+                <span className="memory-anonymous-control-btn-icon" aria-hidden>↻</span>
+                <span>{isRefreshing ? "Обновление..." : "Обновить"}</span>
+              </button>
+            </div>
+          </section>
+        </div>
+
+        <div className="memory-anonymous-cards" role="list" aria-label="Лента анонимных сообщений">
+          {status === "loading" && (
+            <p className="memory-anonymous-state">Загрузка сообщений...</p>
           )}
-        </section>
 
-        <section className="memory-anonymous-control-group" data-group="sort" aria-label="Сортировка по дате">
-          <p className="memory-anonymous-control-title">Сортировка</p>
-          <div className="memory-anonymous-control-row" role="tablist" aria-label="Сортировка по дате">
+          {status === "error" && (
+            <p className="memory-anonymous-state">{errorMessage ?? "Не удалось загрузить сообщения."}</p>
+          )}
+
+          {emptyState && (
+            <p className="memory-anonymous-state">По выбранному фильтру пока нет сообщений.</p>
+          )}
+
+          {pagedItems.map((item, index) => {
+            const absoluteIndex = pageStartIndex + index;
+            const cardId = `${item.id}-${absoluteIndex}`;
+            const isTruncated = Boolean(isTruncatedById[cardId]);
+            const createdLabel = item.createdAt ? formatTimestamp(item.createdAt) : "Время не указано";
+
+            return (
+              <article key={cardId} className="memory-anonymous-card">
+                <div className="memory-anonymous-card-head">
+                  <p className="memory-anonymous-card-index" aria-label={`Сообщение номер ${absoluteIndex + 1}`}>
+                    #{String(absoluteIndex + 1).padStart(2, "0")}
+                  </p>
+                  <p className="memory-anonymous-card-time">{createdLabel}</p>
+                </div>
+                <p
+                  ref={(node) => setCardTextRef(cardId, node)}
+                  className="memory-anonymous-card-text"
+                >
+                  {item.text}
+                </p>
+                {isTruncated && (
+                  <button
+                    type="button"
+                    className="memory-anonymous-card-read-more"
+                    onClick={() => setActiveMessage({ id: cardId, text: item.text, createdLabel })}
+                    aria-haspopup="dialog"
+                    aria-label="Читать сообщение полностью"
+                  >
+                    Читать полностью
+                  </button>
+                )}
+              </article>
+            );
+          })}
+        </div>
+
+        {totalPages > 1 && (
+          <nav className="memory-anonymous-pagination" aria-label="Пагинация сообщений">
             <button
               type="button"
-              className={cn("memory-anonymous-control-btn", sortMode === "newest" && "is-active")}
-              onClick={() => setSortMode("newest")}
+              className="memory-anonymous-pagination-btn"
+              onClick={() => setCurrentPage((previous) => Math.max(1, previous - 1))}
+              disabled={currentPage <= 1}
             >
-              <span className="memory-anonymous-control-btn-icon" aria-hidden>↓</span>
-              <span>Сначала новые</span>
+              Назад
             </button>
-            <button
-              type="button"
-              className={cn("memory-anonymous-control-btn", sortMode === "oldest" && "is-active")}
-              onClick={() => setSortMode("oldest")}
-            >
-              <span className="memory-anonymous-control-btn-icon" aria-hidden>↑</span>
-              <span>Сначала старые</span>
-            </button>
-          </div>
-        </section>
-
-        <section
-          className="memory-anonymous-control-group memory-anonymous-control-group-service"
-          data-group="service"
-          aria-label="Действия"
-        >
-          <p className="memory-anonymous-control-title">Сервис</p>
-          <div className="memory-anonymous-control-row">
-            <button
-              type="button"
-              className={cn("memory-anonymous-control-btn memory-anonymous-control-btn-refresh", isRefreshing && "is-loading")}
-              onClick={loadData}
-              disabled={isRefreshing}
-            >
-              <span className="memory-anonymous-control-btn-icon" aria-hidden>↻</span>
-              <span>{isRefreshing ? "Обновление..." : "Обновить"}</span>
-            </button>
-          </div>
-        </section>
-      </div>
-
-      <div className="memory-anonymous-cards" role="list" aria-label="Лента анонимных сообщений">
-        {status === "loading" && (
-          <p className="memory-anonymous-state">Загрузка сообщений...</p>
-        )}
-
-        {status === "error" && (
-          <p className="memory-anonymous-state">{errorMessage ?? "Не удалось загрузить сообщения."}</p>
-        )}
-
-        {emptyState && (
-          <p className="memory-anonymous-state">По выбранному фильтру пока нет сообщений.</p>
-        )}
-
-        {sortedItems.map((item, index) => (
-          <article key={`${item.id}-${index}`} className="memory-anonymous-card">
-            <p className="memory-anonymous-card-text">{item.text}</p>
-            <p className="memory-anonymous-card-time">
-              {item.createdAt ? formatTimestamp(item.createdAt) : "Время не указано"}
+            <p className="memory-anonymous-pagination-status">
+              Страница {currentPage} из {totalPages}
             </p>
-          </article>
-        ))}
-      </div>
-    </section>
+            <button
+              type="button"
+              className="memory-anonymous-pagination-btn"
+              onClick={() => setCurrentPage((previous) => Math.min(totalPages, previous + 1))}
+              disabled={currentPage >= totalPages}
+            >
+              Вперёд
+            </button>
+          </nav>
+        )}
+      </section>
+
+      {activeMessage &&
+        createPortal(
+          <div
+            className="memory-anonymous-modal"
+            role="presentation"
+            onClick={() => setActiveMessage(null)}
+          >
+            <div
+              className="memory-anonymous-modal-card"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="memory-anonymous-modal-title"
+              onClick={(event) => event.stopPropagation()}
+            >
+              <button
+                type="button"
+                className="memory-anonymous-modal-close"
+                onClick={() => setActiveMessage(null)}
+                aria-label="Закрыть полное сообщение"
+              >
+                Закрыть
+              </button>
+
+              <div className="memory-anonymous-modal-head">
+                <h3 id="memory-anonymous-modal-title" className="memory-anonymous-modal-title">
+                  Голос форума без имени
+                </h3>
+                <p className="memory-anonymous-modal-time">{activeMessage.createdLabel}</p>
+              </div>
+
+              <p className="memory-anonymous-modal-text">{activeMessage.text}</p>
+            </div>
+          </div>,
+          document.body,
+        )}
+    </>
   );
 }
