@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { TrackedButton } from "@/components/tracked-button";
-import { heroContent, photoGrid, vkAlbumUrl } from "@/data/home";
+import { heroContent, getRandomPhotoAlbumsByYear } from "@/data/home";
 import { siteConfig } from "@/config/site";
 import { assetPath } from "@/lib/assets";
 import { HomeScrollTracker } from "@/components/home-scroll-tracker";
@@ -9,9 +9,11 @@ import { RouteSection } from "@/components/route-section";
 import { OrganizersShowcase } from "@/components/organizers-showcase";
 import { RectorBlock } from "@/components/rector-block";
 import { PowerPoints } from "@/components/power-points";
-import { PhotoScatter } from "@/components/photo-scatter";
+import { PhotoYearAlbums } from "@/components/photo-year-albums";
 
 export default function Home() {
+  const photoAlbumsByYear = getRandomPhotoAlbumsByYear();
+
   return (
     <div>
       <HomeScrollTracker />
@@ -89,25 +91,17 @@ export default function Home() {
 
       <section id="photos" className="section-panel panel-night">
         <div className="section-inner space-y-8">
-          <div className="flex flex-wrap items-end justify-between gap-6">
-            <div className="max-w-2xl space-y-3">
-              <p className="section-eyebrow text-primary/90">Фото</p>
-              <h2 className="text-3xl font-semibold md:text-4xl">
-                Атмосфера <span className="text-gradient">СтудСтарта</span>
-              </h2>
-            </div>
-            <TrackedButton
-              href={vkAlbumUrl}
-              variant="secondary"
-              goal="open_vk_album"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Смотреть альбом VK
-            </TrackedButton>
+          <div className="max-w-2xl space-y-3">
+            <p className="section-eyebrow text-primary/90">Фото</p>
+            <h2 className="text-3xl font-semibold md:text-4xl">
+              Атмосфера <span className="text-gradient">СтудСтарта</span>
+            </h2>
+            <p className="text-sm text-muted md:text-base">
+              Выбирай год и листай полароиды с самыми живыми моментами форума.
+            </p>
           </div>
-          
-          <PhotoScatter photos={photoGrid} albumUrl={vkAlbumUrl} />
+
+          <PhotoYearAlbums albums={photoAlbumsByYear} />
         </div>
       </section>
 

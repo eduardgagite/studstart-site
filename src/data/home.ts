@@ -1,3 +1,6 @@
+import path from "node:path";
+import { readdirSync } from "node:fs";
+
 export const heroContent = {
   title: "СтудСтарт",
   subtitle:
@@ -45,72 +48,98 @@ export const participationSteps = [
   "Следи за анонсами следующего набора",
 ];
 
-export const photoGrid = [
+export type HomePhoto = {
+  id: string;
+  alt: string;
+  src: string;
+  width: number;
+  height: number;
+};
+
+export type HomePhotoAlbum = {
+  id: string;
+  year: string;
+  title: string;
+  subtitle: string;
+  vkUrl?: string;
+  photos: HomePhoto[];
+};
+
+const GALLERY_ROOT_DIR = path.join(process.cwd(), "public", "images", "gallery");
+const IMAGE_FILE_PATTERN = /\.(png|jpe?g|webp|avif)$/i;
+const FALLBACK_WIDTH = 1920;
+const FALLBACK_HEIGHT = 1080;
+
+const albumConfigs: Array<Omit<HomePhotoAlbum, "photos">> = [
   {
-    id: "display-1",
-    alt: "СтудСтарт: утро в горах",
-    src: "/images/gallery/display/6X3MoKEGkG6kGpRd3YVoZ08vqDi4M-SfR72SKYll0SOWdoc3jjKXWvetfhtDxLabOkPVuSzOqo7VmxAMgzDxdu5z.jpg",
-    width: 1920,
-    height: 1157,
+    id: "2026",
+    year: "2026",
+    title: "СтудСтарт",
+    subtitle: "",
+    vkUrl: "https://vk.ru/album-210657216_311570594",
   },
   {
-    id: "display-2",
-    alt: "СтудСтарт: командные активности",
-    src: "/images/gallery/display/9CiIgWnew4YSwNm8YAfmRbY8zlh777RnmueIGK3BDGcdWoSBqBpeXUdGWM18KptUH-g5oMg9iH6WaOhFmcCjSFmt.jpg",
-    width: 1920,
-    height: 1322,
+    id: "2025",
+    year: "2025",
+    title: "Зимняя школа актива",
+    subtitle: "",
+    vkUrl: "https://vk.ru/album-210657216_307649375",
   },
   {
-    id: "display-3",
-    alt: "СтудСтарт: эмоции участников",
-    src: "/images/gallery/display/8T9hr_S2zXD7tPGvLyKrOYDuhpLja_QhchCh-PLWOjwZSfuGTfEnfLMphETeoQMsch6knUr7PG-3d__sOWpKaghv.jpg",
-    width: 1920,
-    height: 1388,
-  },
-  {
-    id: "display-4",
-    alt: "СтудСтарт: вечерняя атмосфера",
-    src: "/images/gallery/display/APt8JCckEuY1EQ8JFkRP5VYxI-XGbHp08PfBxG9AoAmgVHuR0vw3wKFW1q7qrRxrOEZ754mZF2_B-MIcR2S2AdZI.jpg",
-    width: 1920,
-    height: 1131,
-  },
-  {
-    id: "display-5",
-    alt: "СтудСтарт: общение и знакомства",
-    src: "/images/gallery/display/sZIY1cOa18BiuJawyx9bTawjwlF6QrCmxZP4IUXxIdaaC3bw3_DBMtzNgsM5Dsoh2kGsDCEpde1W2lCo-Sxyp_0J.jpg",
-    width: 1920,
-    height: 1271,
-  },
-  {
-    id: "display-6",
-    alt: "СтудСтарт: сильная команда",
-    src: "/images/gallery/display/XHbE9-uRakk45YLN_hnJjlo0cKvljWQmrwiKdL8d9FMtX-bKyLPswuYCh-FTSaILpk392AlArYZ-qNHr-eMdD3pf.jpg",
-    width: 1920,
-    height: 1196,
-  },
-  {
-    id: "display-7",
-    alt: "СтудСтарт: вдохновение и драйв",
-    src: "/images/gallery/display/grw5BU0HZxqRIdbBwQ5uD9rpYrQURsUVNpCG-02O9IFlOtOkxhXjxeYWtPRSDYoCYeXTqWbm3btyDz8e4QTBwkc7.jpg",
-    width: 1920,
-    height: 1158,
-  },
-  {
-    id: "display-8",
-    alt: "СтудСтарт: моменты, которые хочется сохранить",
-    src: "/images/gallery/display/0EKl_1rpkmjirYHNsyyXO8Ok_h40LSKtNjzwh4nowE-OXpy9OamgQ-DMq00VfZm6YEJRJDYzYQecMAU75ATXPKlj.jpg",
-    width: 1920,
-    height: 1212,
-  },
-  {
-    id: "display-9",
-    alt: "СтудСтарт: улыбки и поддержка",
-    src: "/images/gallery/display/9YMBChiT4mvJdlUU0jmQBP01FGlvQD9ry_uxGEiHkLtBBkhimIEqxHS_36IiZItBshir2S0EPQlbhBf4N69-0xhJ.jpg",
-    width: 1920,
-    height: 1157,
+    id: "2024",
+    year: "2024",
+    title: "Первый шаг",
+    subtitle: "",
+    vkUrl: "https://vk.ru/album-210657216_301068246",
   },
 ];
 
+function shuffleArray<T>(items: T[]): T[] {
+  const shuffled = [...items];
+
+  for (let i = shuffled.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+
+  return shuffled;
+}
+
+function buildAlbumPhotos(year: string): HomePhoto[] {
+  const yearDir = path.join(GALLERY_ROOT_DIR, year);
+
+  try {
+    const filenames = readdirSync(yearDir)
+      .filter((name) => !name.startsWith("."))
+      .filter((name) => IMAGE_FILE_PATTERN.test(name))
+      .sort((a, b) => a.localeCompare(b, "ru"));
+
+    return shuffleArray(filenames).map((filename, index) => {
+      const id = filename.replace(/\.[^.]+$/u, "");
+      const number = String(index + 1).padStart(2, "0");
+
+      return {
+        id: `${year}-${id}`,
+        alt: `СтудСтарт ${year}: фото ${number}`,
+        src: `/images/gallery/${year}/${filename}`,
+        width: FALLBACK_WIDTH,
+        height: FALLBACK_HEIGHT,
+      };
+    });
+  } catch {
+    return [];
+  }
+}
+
+export function getRandomPhotoAlbumsByYear(): HomePhotoAlbum[] {
+  return albumConfigs.map((album) => ({
+    ...album,
+    photos: buildAlbumPhotos(album.year),
+  }));
+}
+
+export const photoAlbumsByYear: HomePhotoAlbum[] = getRandomPhotoAlbumsByYear();
+export const photoGrid = photoAlbumsByYear.flatMap((album) => album.photos);
 export const vkAlbumUrl = "https://vk.ru/album-210657216_307649375";
 
 export const organizers = [

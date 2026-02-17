@@ -11,8 +11,45 @@ export const metadata: Metadata = {
 };
 
 const DISPLAY_PHOTOS_DIR = path.join(process.cwd(), "public", "images", "gallery", "display");
+const GALLERY_ROOT_DIR = path.join(process.cwd(), "public", "images", "gallery");
+const DISPLAY_ALBUMS = ["2026", "2025", "2024"] as const;
+
+function collectPhotoPaths(rootDir: string, publicBase: string): string[] {
+  try {
+    const entries = readdirSync(rootDir, { withFileTypes: true });
+    return entries.flatMap((entry) => {
+      if (entry.name.startsWith(".")) {
+        return [];
+      }
+
+      const absolutePath = path.join(rootDir, entry.name);
+      const publicPath = `${publicBase}/${entry.name}`;
+
+      if (entry.isDirectory()) {
+        return collectPhotoPaths(absolutePath, publicPath);
+      }
+
+      if (!/\.(png|jpe?g|webp|avif)$/i.test(entry.name)) {
+        return [];
+      }
+
+      return [publicPath];
+    });
+  } catch {
+    return [];
+  }
+}
 
 function getDisplayPhotos() {
+  const fromAlbumFolders = DISPLAY_ALBUMS.flatMap((year) =>
+    collectPhotoPaths(path.join(GALLERY_ROOT_DIR, year), `/images/gallery/${year}`),
+  );
+
+  if (fromAlbumFolders.length > 0) {
+    return fromAlbumFolders.sort((a, b) => a.localeCompare(b, "ru")).map((file) => assetPath(file));
+  }
+
+  // Fallback for old flat structure
   try {
     const entries = readdirSync(DISPLAY_PHOTOS_DIR);
     return entries
